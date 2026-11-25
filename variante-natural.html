@@ -136,8 +136,10 @@ dialog::backdrop{background:rgb(20 32 25 / 55%);backdrop-filter:blur(2px)}
 .autor{width:100%;margin-top:26px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:.74rem;text-align:center}
 /* La lectura sube como hoja: la página no crece. */
 body.sheet-open::before{content:"";position:fixed;inset:0;z-index:35;background:rgb(12 32 58 / 45%);backdrop-filter:blur(2px)}
-body.sheet-open #readingCard{position:fixed;right:0;bottom:0;left:0;z-index:40;width:min(100%,540px);max-height:82dvh;margin:0 auto;overflow:auto;border-radius:22px 22px 0 0;box-shadow:0 -16px 40px rgb(12 32 58 / 26%)}
-body.sheet-open #readingCard::before{content:"";display:block;width:44px;height:5px;margin:9px auto 4px;border-radius:999px;background:var(--line-strong)}
+body.sheet-open #readingCard,
+body.sheet-open #resultCard{position:fixed;right:0;bottom:0;left:0;z-index:40;width:min(100%,540px);max-height:82dvh;margin:0 auto;overflow:auto;border-radius:22px 22px 0 0;box-shadow:0 -16px 40px rgb(12 32 58 / 26%)}
+body.sheet-open #readingCard::before,
+body.sheet-open #resultCard::before{content:"";display:block;width:44px;height:5px;margin:9px auto 4px;border-radius:999px;background:var(--line-strong)}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>

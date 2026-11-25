@@ -189,6 +189,7 @@
       setReadingVisible(false);
       $("resultCard").hidden = false;
       document.body.classList.add("result-open");
+      if (readingMode === "sheet") document.body.classList.add("sheet-open");
       $("resultType").textContent = "Entrada";
       $("resultPlate").textContent = plate;
       $("resultTime").textContent = formatTime.format(new Date());
