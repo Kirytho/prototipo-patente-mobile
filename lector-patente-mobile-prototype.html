@@ -1,0 +1,1286 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#eef3f8">
+  <meta name="color-scheme" content="light">
+  <title>Prototipo móvil — Control de acceso</title>
+  <style>
+    :root {
+      --bg: #eef3f8;
+      --surface: #ffffff;
+      --surface-2: #f7f9fc;
+      --ink: #10213a;
+      --muted: #607187;
+      --line: #d5dfeb;
+      --line-strong: #b9c8d9;
+      --primary: #155eef;
+      --primary-dark: #0b3d91;
+      --entry: #087a55;
+      --entry-soft: #e4f6ee;
+      --exit: #b5471b;
+      --exit-soft: #fff0e8;
+      --warn: #985900;
+      --warn-soft: #fff5d9;
+      --danger: #b42318;
+      --focus: #7c3aed;
+      --shadow-sm: 0 1px 2px rgb(16 33 58 / 7%), 0 4px 14px rgb(16 33 58 / 5%);
+      --shadow-lg: 0 18px 45px rgb(16 33 58 / 16%);
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
+      --tap: 48px;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html {
+      min-height: 100%;
+      background: var(--bg);
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100dvh;
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 100% 0%, rgb(21 94 239 / 8%), transparent 30rem),
+        var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.45;
+      -webkit-tap-highlight-color: rgb(21 94 239 / 14%);
+    }
+    button, input { font: inherit; }
+    button { touch-action: manipulation; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, input:focus-visible, a:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+    [hidden] { display: none !important; }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .skip-link {
+      position: fixed;
+      top: 8px;
+      left: 8px;
+      z-index: 100;
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: #fff;
+      background: var(--ink);
+      transform: translateY(-150%);
+      transition: transform 160ms ease;
+    }
+    .skip-link:focus { transform: translateY(0); }
+
+    .app {
+      width: min(100%, 520px);
+      min-height: 100dvh;
+      flex: 1 0 auto;
+      margin: 0 auto;
+      padding:
+        calc(var(--safe-top) + 10px)
+        calc(var(--safe-right) + 16px)
+        calc(112px + var(--safe-bottom))
+        calc(var(--safe-left) + 16px);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      gap: 11px;
+    }
+    .brand-mark {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      flex: 0 0 auto;
+      place-items: center;
+      border: 2px solid var(--ink);
+      border-radius: 13px;
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+    }
+    .brand-mark svg { width: 24px; height: 24px; }
+    .brand-copy { min-width: 0; }
+    .brand-copy strong {
+      display: block;
+      overflow: hidden;
+      font-size: 0.94rem;
+      line-height: 1.2;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .brand-copy span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 0.73rem;
+    }
+    .prototype-chip {
+      flex: 0 0 auto;
+      padding: 6px 9px;
+      border: 1px solid #f0c36a;
+      border-radius: 999px;
+      color: #704400;
+      background: #fff7df;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .view { animation: view-in 180ms ease-out both; }
+    @keyframes view-in {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .eyebrow {
+      margin: 0 0 5px;
+      color: var(--primary-dark);
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 12ch;
+      margin-bottom: 8px;
+      font-size: clamp(1.8rem, 8vw, 2.35rem);
+      line-height: 1.02;
+      letter-spacing: -0.045em;
+      text-wrap: balance;
+    }
+    h2 {
+      margin-bottom: 6px;
+      font-size: 1.16rem;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      text-wrap: balance;
+    }
+    h3 {
+      margin-bottom: 4px;
+      font-size: 0.98rem;
+      line-height: 1.25;
+    }
+    .lede {
+      max-width: 38ch;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-size: 0.93rem;
+      text-wrap: pretty;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+    }
+    .capture-card { padding: 12px; }
+
+    .camera-shell {
+      position: relative;
+      height: clamp(170px, 32dvh, 286px);
+      min-height: 0;
+      overflow: hidden;
+      border-radius: 16px;
+      color: #fff;
+      background:
+        linear-gradient(180deg, rgb(8 17 31 / 15%), rgb(8 17 31 / 75%)),
+        linear-gradient(135deg, #41556d 0%, #263a52 52%, #14253a 100%);
+      isolation: isolate;
+    }
+    .camera-shell::after {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(90deg, transparent 49.8%, rgb(255 255 255 / 7%) 50%, transparent 50.2%),
+        linear-gradient(0deg, transparent 49.8%, rgb(255 255 255 / 7%) 50%, transparent 50.2%);
+      content: "";
+    }
+    .camera-topline {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .camera-status {
+      display: inline-flex;
+      min-height: 32px;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 10px;
+      border: 1px solid rgb(255 255 255 / 20%);
+      border-radius: 999px;
+      background: rgb(5 15 28 / 48%);
+      backdrop-filter: blur(8px);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .camera-status::before {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #55e6a5;
+      box-shadow: 0 0 0 4px rgb(85 230 165 / 16%);
+      content: "";
+    }
+    .camera-index {
+      color: rgb(255 255 255 / 72%);
+      font-size: 0.72rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .vehicle {
+      position: absolute;
+      top: 48%;
+      left: 50%;
+      width: min(78%, 330px);
+      transform: translate(-50%, -50%);
+      color: #d8e2ec;
+    }
+    .vehicle svg { display: block; width: 100%; height: auto; }
+    .guide {
+      position: absolute;
+      top: 30%;
+      right: 11%;
+      bottom: 25%;
+      left: 11%;
+      border: 1px solid rgb(255 255 255 / 20%);
+      border-radius: 12px;
+    }
+    .corner {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border-color: #69a0ff;
+      border-style: solid;
+    }
+    .corner.tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-radius: 10px 0 0; }
+    .corner.tr { top: -2px; right: -2px; border-width: 3px 3px 0 0; border-radius: 0 10px 0 0; }
+    .corner.bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; border-radius: 0 0 0 10px; }
+    .corner.br { right: -2px; bottom: -2px; border-width: 0 3px 3px 0; border-radius: 0 0 10px; }
+    .camera-hint {
+      position: absolute;
+      right: 16px;
+      bottom: 14px;
+      left: 16px;
+      margin: 0;
+      color: rgb(255 255 255 / 82%);
+      font-size: 0.78rem;
+      text-align: center;
+      text-wrap: balance;
+    }
+    .scanning .guide {
+      border-color: #7db2ff;
+      box-shadow: 0 0 0 999px rgb(8 17 31 / 22%);
+      animation: scan-pulse 1s ease-in-out infinite alternate;
+    }
+    .scanning .guide::after {
+      position: absolute;
+      top: 0;
+      right: 8px;
+      left: 8px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #78aaff, transparent);
+      content: "";
+      animation: scan-line 1s linear infinite;
+    }
+    @keyframes scan-pulse { to { transform: scale(0.985); opacity: 0.76; } }
+    @keyframes scan-line { from { top: 5%; } to { top: 95%; } }
+
+    .capture-actions {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .btn {
+      display: inline-flex;
+      min-height: var(--tap);
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 12px 15px;
+      border: 1px solid transparent;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 800;
+      line-height: 1.15;
+      text-align: center;
+      transition: transform 120ms ease, background-color 120ms ease, border-color 120ms ease;
+    }
+    .btn:active { transform: scale(0.985); }
+    .btn svg { width: 21px; height: 21px; flex: 0 0 auto; }
+    .btn-primary { color: #fff; background: var(--primary); }
+    .btn-primary:hover { background: #0d4ed2; }
+    .btn-secondary { border-color: var(--line-strong); color: var(--ink); background: var(--surface); }
+    .btn-secondary:hover { border-color: #8fa5bd; background: var(--surface-2); }
+    .btn-success { color: #fff; background: var(--entry); }
+    .btn-success:hover { background: #056444; }
+    .btn-danger { border-color: #efc4bd; color: var(--danger); background: #fff; }
+    .btn-danger:hover { background: #fff5f3; }
+    .btn-block { width: 100%; }
+    .btn-quiet {
+      min-height: var(--tap);
+      border: 0;
+      color: var(--primary-dark);
+      background: transparent;
+      cursor: pointer;
+      font-weight: 800;
+    }
+    .btn-quiet:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .capture-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 6px;
+      border-top: 1px solid var(--line);
+      padding-top: 6px;
+    }
+    .capture-foot span { color: var(--muted); font-size: 0.73rem; }
+
+    .section-gap { margin-top: 18px; }
+    .reading-card {
+      overflow: hidden;
+      border: 1px solid #b8c8da;
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+    }
+    .reading-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 15px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-2);
+    }
+    .reading-head strong { font-size: 0.9rem; }
+    .reading-head span { color: var(--muted); font-size: 0.75rem; }
+    .plate-frame {
+      position: relative;
+      margin: 16px;
+      overflow: hidden;
+      border: 2px solid var(--ink);
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 5px 0 var(--line-strong);
+    }
+    .plate-frame::before,
+    .plate-frame::after {
+      position: absolute;
+      top: 50%;
+      width: 9px;
+      height: 9px;
+      border: 2px solid var(--line-strong);
+      border-radius: 50%;
+      background: var(--bg);
+      content: "";
+      transform: translateY(-50%);
+    }
+    .plate-frame::before { left: 7px; }
+    .plate-frame::after { right: 7px; }
+    .plate-country {
+      padding: 7px 34px 5px;
+      border-bottom: 2px solid var(--ink);
+      color: var(--primary-dark);
+      background: #eef4ff;
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.24em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+    .plate-input {
+      width: 100%;
+      min-height: 74px;
+      border: 0;
+      border-radius: 0;
+      color: var(--ink);
+      background: #fff;
+      font-family: "Arial Narrow", "Roboto Condensed", ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: clamp(2rem, 10vw, 2.65rem);
+      font-weight: 900;
+      letter-spacing: 0.11em;
+      line-height: 1;
+      text-align: center;
+      text-transform: uppercase;
+    }
+    .plate-input:focus { outline-offset: -5px; }
+    .reading-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 0 16px 15px;
+      padding: 11px 12px;
+      border: 1px solid #e8cc7b;
+      border-radius: 12px;
+      color: #684000;
+      background: var(--warn-soft);
+      font-size: 0.79rem;
+    }
+    .reading-note svg { width: 20px; height: 20px; flex: 0 0 auto; }
+    .reading-note strong { display: block; margin-bottom: 2px; }
+    .reading-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 0 16px 16px;
+    }
+
+    .result-card {
+      overflow: hidden;
+      border-radius: var(--radius-lg);
+      color: #fff;
+      background: var(--entry);
+      box-shadow: var(--shadow-lg);
+    }
+    .result-card.salida { background: var(--exit); }
+    .result-stripe {
+      height: 7px;
+      background: repeating-linear-gradient(135deg, rgb(255 255 255 / 35%) 0 10px, transparent 10px 20px);
+    }
+    .result-body { padding: 24px 20px 20px; text-align: center; }
+    .result-body p { margin-bottom: 5px; color: rgb(255 255 255 / 78%); font-size: 0.8rem; }
+    .result-type {
+      margin-bottom: 12px;
+      font-size: clamp(2.4rem, 14vw, 3.4rem);
+      font-weight: 900;
+      letter-spacing: 0.09em;
+      line-height: 0.95;
+    }
+    .result-plate {
+      margin-bottom: 10px;
+      font-family: "Arial Narrow", "Roboto Condensed", ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: clamp(2.25rem, 12vw, 3rem);
+      font-weight: 900;
+      letter-spacing: 0.1em;
+    }
+    .result-time { font-variant-numeric: tabular-nums; }
+    .result-body .btn {
+      margin-top: 20px;
+      color: var(--entry);
+      background: #fff;
+    }
+    .result-card.salida .result-body .btn { color: var(--exit); }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .search-wrap { position: relative; flex: 1; min-width: 0; }
+    .search-wrap svg {
+      position: absolute;
+      top: 50%;
+      left: 14px;
+      width: 20px;
+      height: 20px;
+      color: var(--muted);
+      pointer-events: none;
+      transform: translateY(-50%);
+    }
+    .search-input {
+      width: 100%;
+      min-height: var(--tap);
+      padding: 11px 13px 11px 43px;
+      border: 1px solid var(--line-strong);
+      border-radius: 14px;
+      color: var(--ink);
+      background: var(--surface);
+      font-size: 1rem;
+    }
+    .search-input::placeholder { color: #8291a3; }
+    .icon-btn {
+      display: inline-grid;
+      width: var(--tap);
+      height: var(--tap);
+      flex: 0 0 auto;
+      place-items: center;
+      border: 1px solid var(--line-strong);
+      border-radius: 14px;
+      color: var(--ink);
+      background: var(--surface);
+      cursor: pointer;
+    }
+    .icon-btn:hover { background: var(--surface-2); }
+    .icon-btn svg { width: 21px; height: 21px; }
+    .segments {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      margin-bottom: 14px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #e4ebf3;
+    }
+    .segment {
+      min-height: 44px;
+      padding: 8px 6px;
+      border: 0;
+      border-radius: 10px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+    .segment[aria-pressed="true"] {
+      color: var(--ink);
+      background: var(--surface);
+      box-shadow: 0 1px 4px rgb(16 33 58 / 13%);
+    }
+
+    .record-list { display: grid; gap: 10px; }
+    .record {
+      display: grid;
+      grid-template-columns: 62px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      min-height: 82px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+    }
+    .record-photo {
+      position: relative;
+      display: grid;
+      width: 62px;
+      height: 62px;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 10px;
+      color: #d9e4ef;
+      background:
+        linear-gradient(180deg, rgb(7 18 33 / 6%), rgb(7 18 33 / 54%)),
+        linear-gradient(135deg, #cbd6e2, #8ea0b4);
+    }
+    .record-photo::after {
+      width: 40px;
+      height: 13px;
+      border: 2px solid rgb(255 255 255 / 82%);
+      border-radius: 4px;
+      background: #eef2f5;
+      box-shadow: 0 0 0 3px rgb(16 33 58 / 16%);
+      content: "";
+    }
+    .record-photo.no-photo {
+      color: #e4ebf2;
+      background: #52657a;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .record-photo.no-photo::after { display: none; }
+    .record-main { min-width: 0; }
+    .record-plate {
+      overflow: hidden;
+      margin-bottom: 3px;
+      font-family: "Arial Narrow", "Roboto Condensed", ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 1.18rem;
+      font-weight: 900;
+      letter-spacing: 0.07em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .record-time {
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-variant-numeric: tabular-nums;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .record-meta { color: var(--muted); font-size: 0.7rem; }
+    .badge {
+      display: inline-flex;
+      min-height: 28px;
+      align-items: center;
+      padding: 5px 8px;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+    .badge.entrada { background: var(--entry); }
+    .badge.salida { background: var(--exit); }
+    .badge.adentro { background: var(--entry); }
+    .empty {
+      padding: 30px 18px;
+      border: 1px dashed var(--line-strong);
+      border-radius: var(--radius-md);
+      color: var(--muted);
+      background: rgb(255 255 255 / 58%);
+      text-align: center;
+    }
+    .empty strong { display: block; margin-bottom: 4px; color: var(--ink); }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .metric {
+      padding: 12px 8px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      text-align: center;
+    }
+    .metric strong {
+      display: block;
+      font-size: 1.55rem;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+    .metric span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 0.66rem;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    .metric.primary { border-color: #b7cafa; background: #eef4ff; }
+    .metric.primary strong { color: var(--primary-dark); }
+
+    .refresh-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 10px 0 14px;
+      color: var(--muted);
+      font-size: 0.74rem;
+    }
+    .text-btn {
+      min-height: 44px;
+      padding: 7px 10px;
+      border: 0;
+      border-radius: 9px;
+      color: var(--primary-dark);
+      background: #e7efff;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+    .text-btn:hover { background: #d9e5ff; }
+
+    .bottom-nav {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 20;
+      width: min(100%, 520px);
+      margin: 0 auto;
+      padding: 7px max(12px, var(--safe-right)) calc(7px + var(--safe-bottom)) max(12px, var(--safe-left));
+      border-top: 1px solid var(--line);
+      background: rgb(255 255 255 / 94%);
+      box-shadow: 0 -8px 30px rgb(16 33 58 / 8%);
+      backdrop-filter: blur(14px);
+    }
+    .nav-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .nav-button {
+      display: flex;
+      min-height: 58px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 5px;
+      border: 0;
+      border-radius: 12px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      font-size: 0.68rem;
+      font-weight: 800;
+    }
+    .nav-button svg { width: 22px; height: 22px; }
+    .nav-button[aria-current="page"] { color: var(--primary-dark); background: #e8efff; }
+    .autor {
+      width: 100%;
+      padding: 14px 16px 0;
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    dialog {
+      width: min(100% - 24px, 480px);
+      margin: auto auto 0;
+      padding: 0;
+      border: 0;
+      border-radius: 22px 22px 0 0;
+      color: var(--ink);
+      background: var(--surface);
+      box-shadow: var(--shadow-lg);
+      overscroll-behavior: contain;
+    }
+    dialog::backdrop { background: rgb(6 16 30 / 55%); backdrop-filter: blur(2px); }
+    .sheet-handle {
+      width: 42px;
+      height: 5px;
+      margin: 9px auto 3px;
+      border-radius: 999px;
+      background: #c8d2de;
+    }
+    .sheet-body { padding: 16px 18px calc(20px + var(--safe-bottom)); }
+    .sheet-body h2 { margin-bottom: 6px; }
+    .sheet-body p { margin-bottom: 16px; color: var(--muted); font-size: 0.86rem; }
+    .field-label { display: block; margin-bottom: 7px; font-size: 0.8rem; font-weight: 800; }
+    .manual-input {
+      width: 100%;
+      min-height: 58px;
+      padding: 10px 13px;
+      border: 2px solid var(--line-strong);
+      border-radius: 13px;
+      color: var(--ink);
+      background: #fff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .sheet-actions { display: grid; grid-template-columns: 1fr 1.3fr; gap: 10px; margin-top: 14px; }
+
+    .toast {
+      position: fixed;
+      right: 16px;
+      bottom: calc(92px + var(--safe-bottom));
+      left: 16px;
+      z-index: 30;
+      width: min(100% - 32px, 460px);
+      margin: 0 auto;
+      padding: 12px 14px;
+      border-radius: 13px;
+      color: #fff;
+      background: var(--ink);
+      box-shadow: var(--shadow-lg);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+      transition: opacity 160ms ease, transform 160ms ease;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (min-width: 640px) {
+      .app { padding-right: 24px; padding-left: 24px; }
+      .bottom-nav { border-right: 1px solid var(--line); border-left: 1px solid var(--line); }
+    }
+    @media (max-width: 350px) {
+      .app { padding-right: 11px; padding-left: 11px; }
+      .capture-actions { grid-template-columns: 1fr; }
+      .reading-actions { grid-template-columns: 1fr; }
+      .prototype-chip { display: none; }
+      .record { grid-template-columns: 52px minmax(0, 1fr) auto; gap: 9px; }
+      .record-photo { width: 52px; height: 52px; }
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    /* La cámara se convierte en la lectura: no se agrega nada abajo. */
+    body[data-reading-mode="replace"].reading-open .capture-card,
+    body[data-reading-mode="replace"].result-open .capture-card { display: none; }
+    body[data-reading-mode="replace"] #readingCard.section-gap,
+    body[data-reading-mode="replace"] #resultCard.section-gap { margin-top: 0; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body data-reading-mode="replace">
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+            <path d="M7 9h10M7 12h7M7 15h4"></path>
+          </svg>
+        </span>
+        <span class="brand-copy">
+          <strong>Control de acceso</strong>
+          <span>Estacionamiento</span>
+        </span>
+      </div>
+      <span class="prototype-chip">Prototipo</span>
+    </header>
+
+    <main id="contenido" tabindex="-1">
+      <section class="view" id="vista-capturar" aria-labelledby="titulo-capturar">
+        <p class="eyebrow">Nuevo movimiento</p>
+        <h1 id="titulo-capturar">Registra el vehículo</h1>
+        <p class="lede">Encuadra la patente. La lectura siempre se confirma antes de guardarse.</p>
+
+        <div class="card capture-card">
+          <div class="camera-shell" id="cameraShell">
+            <div class="camera-topline">
+              <span class="camera-status" id="cameraStatus">Cámara Lista</span>
+              <span class="camera-index">1 / 1</span>
+            </div>
+            <div class="guide" aria-hidden="true">
+              <i class="corner tl"></i><i class="corner tr"></i>
+              <i class="corner bl"></i><i class="corner br"></i>
+            </div>
+            <div class="vehicle" aria-hidden="true">
+              <svg viewBox="0 0 320 180" fill="none">
+                <path d="M38 113 58 70c6-12 18-20 32-20h140c14 0 26 8 32 20l20 43v28c0 9-7 16-16 16H54c-9 0-16-7-16-16v-28Z" fill="currentColor" opacity=".9"></path>
+                <path d="m74 67 12-22h148l12 22H74Z" fill="#526A84"></path>
+                <rect x="103" y="89" width="114" height="37" rx="6" fill="#F6F8FA"></rect>
+                <text x="160" y="114" text-anchor="middle" fill="#10213A" font-family="Arial, sans-serif" font-size="23" font-weight="800" letter-spacing="3">JDXT11</text>
+                <circle cx="68" cy="157" r="17" fill="#0C1725"></circle>
+                <circle cx="252" cy="157" r="17" fill="#0C1725"></circle>
+              </svg>
+            </div>
+            <p class="camera-hint" id="cameraHint">Mantén la patente dentro del recuadro</p>
+          </div>
+
+          <div class="capture-actions">
+            <button class="btn btn-primary" id="btnCamara" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M4 7h4l2-3h4l2 3h4v12H4V7Z"></path><circle cx="12" cy="13" r="4"></circle>
+              </svg>
+              Tomar Foto
+            </button>
+            <button class="btn btn-secondary" id="btnGaleria" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="8" cy="9" r="2"></circle><path d="m21 15-5-5L5 20"></path>
+              </svg>
+              Elegir Foto
+            </button>
+          </div>
+          <div class="capture-foot">
+            <button class="btn-quiet" id="btnManual" type="button">Anotar Patente</button>
+            <span>Datos simulados</span>
+          </div>
+        </div>
+
+        <div class="reading-card section-gap" id="readingCard" hidden aria-labelledby="readingTitle">
+          <div class="reading-head">
+            <strong id="readingTitle">Revisa La Lectura</strong>
+            <span>Resultado Del Modelo</span>
+          </div>
+          <div class="plate-frame">
+            <div class="plate-country">Chile</div>
+            <label class="sr-only" for="placaLeida">Patente leída</label>
+            <input class="plate-input" id="placaLeida" name="placa_leida" value="JDXT11"
+                   autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="text">
+          </div>
+          <div class="reading-note" role="note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M12 3 2.8 20h18.4L12 3Z"></path><path d="M12 9v5M12 17.5v.1"></path>
+            </svg>
+            <span><strong>Confirmación manual obligatoria.</strong> Corrige la patente si la lectura no coincide con el vehículo.</span>
+          </div>
+          <div class="reading-actions">
+            <button class="btn btn-danger" id="btnDescartar" type="button">Descartar</button>
+            <button class="btn btn-success" id="btnConfirmar" type="button">Confirmar Entrada</button>
+          </div>
+        </div>
+
+        <div class="result-card section-gap" id="resultCard" hidden aria-labelledby="resultType">
+          <div class="result-stripe" aria-hidden="true"></div>
+          <div class="result-body">
+            <p>Movimiento Guardado</p>
+            <div class="result-type" id="resultType">Entrada</div>
+            <div class="result-plate" id="resultPlate">JDXT11</div>
+            <div class="result-time" id="resultTime">25 nov 2026 · 10:52</div>
+            <button class="btn btn-block" id="btnOtro" type="button">Registrar Otro</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="vista-bitacora" aria-labelledby="titulo-bitacora" hidden>
+        <p class="eyebrow">Movimientos</p>
+        <h1 id="titulo-bitacora">Bitácora</h1>
+        <p class="lede">Consulta los ingresos y salidas registrados.</p>
+
+        <div class="toolbar">
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path>
+            </svg>
+            <label class="sr-only" for="buscar">Buscar por patente</label>
+            <input class="search-input" id="buscar" name="buscar" placeholder="Buscar por patente…"
+                   autocomplete="off" autocapitalize="characters" spellcheck="false">
+          </div>
+          <button class="icon-btn" id="btnRefrescar" type="button" aria-label="Actualizar bitácora">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M20 7v5h-5"></path><path d="M4 17v-5h5"></path><path d="M6.1 8a7 7 0 0 1 11.4-2.2L20 8M4 16l2.5 2.2A7 7 0 0 0 17.9 16"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div class="segments" role="group" aria-label="Filtrar movimientos">
+          <button class="segment" type="button" data-filter="todos" aria-pressed="true">Todos</button>
+          <button class="segment" type="button" data-filter="entrada" aria-pressed="false">Entradas</button>
+          <button class="segment" type="button" data-filter="salida" aria-pressed="false">Salidas</button>
+        </div>
+        <div class="refresh-row">
+          <span id="freshness">Actualizado ahora</span>
+          <span>Datos simulados</span>
+        </div>
+        <div class="record-list" id="listaBitacora"></div>
+      </section>
+
+      <section class="view" id="vista-adentro" aria-labelledby="titulo-adentro" hidden>
+        <p class="eyebrow">Ocupación actual</p>
+        <h1 id="titulo-adentro">Quién está adentro</h1>
+        <p class="lede">Vehículos con un movimiento de entrada sin salida posterior.</p>
+
+        <div class="summary-grid">
+          <div class="metric primary"><strong>3</strong><span>Adentro</span></div>
+          <div class="metric"><strong>12</strong><span>Entradas</span></div>
+          <div class="metric"><strong>9</strong><span>Salidas</span></div>
+        </div>
+        <div class="record-list" id="listaAdentro"></div>
+      </section>
+    </main>
+    <footer class="autor">© 2026 Desarrollado por Fernando Zapata Figueroa</footer>
+  </div>
+
+  <nav class="bottom-nav" aria-label="Navegación principal">
+    <ul class="nav-list">
+      <li>
+        <button class="nav-button" type="button" data-view="capturar" aria-current="page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M4 7h4l2-3h4l2 3h4v12H4V7Z"></path><circle cx="12" cy="13" r="4"></circle>
+          </svg>
+          Capturar
+        </button>
+      </li>
+      <li>
+        <button class="nav-button" type="button" data-view="bitacora">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6M9 16h4"></path>
+          </svg>
+          Bitácora
+        </button>
+      </li>
+      <li>
+        <button class="nav-button" type="button" data-view="adentro">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M5 16V9l2-4h10l2 4v7"></path><path d="M3 16h18v3H3zM7 12h10"></path>
+          </svg>
+          Adentro
+        </button>
+      </li>
+    </ul>
+  </nav>
+
+  <dialog id="manualDialog" aria-labelledby="manualTitle">
+    <div class="sheet-handle" aria-hidden="true"></div>
+    <form class="sheet-body" id="manualForm" method="dialog">
+      <h2 id="manualTitle">Anotar patente</h2>
+      <p>Úsalo cuando la cámara no pueda tomar una foto legible.</p>
+      <label class="field-label" for="placaManual">Patente del vehículo</label>
+      <input class="manual-input" id="placaManual" name="placa_manual" placeholder="AB1234"
+             autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="text" required>
+      <div class="sheet-actions">
+        <button class="btn btn-danger" id="btnCerrarManual" type="button">Cancelar</button>
+        <button class="btn btn-success" type="submit">Registrar Entrada</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+  <div class="sr-only" id="liveRegion" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const readingMode = document.body.dataset.readingMode || "inline";
+
+    function setReadingVisible(visible) {
+      $("readingCard").hidden = !visible;
+      document.body.classList.toggle("reading-open", visible);
+      document.body.classList.toggle("sheet-open", visible && readingMode === "sheet");
+    }
+    function revealReading() {
+      setReadingVisible(true);
+      if (readingMode === "inline") $("readingCard").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    const views = {
+      capturar: $("vista-capturar"),
+      bitacora: $("vista-bitacora"),
+      adentro: $("vista-adentro")
+    };
+    const navButtons = [...document.querySelectorAll(".nav-button")];
+    const formatTime = new Intl.DateTimeFormat("es-CL", {
+      day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"
+    });
+
+    const records = [
+      { plate: "JDXT11", type: "entrada", when: new Date(2026, 10, 25, 10, 52), photo: true, duration: "Adentro" },
+      { plate: "BBKL23", type: "salida", when: new Date(2026, 10, 25, 10, 36), photo: true, duration: "42 min" },
+      { plate: "GTXD80", type: "entrada", when: new Date(2026, 10, 25, 10, 18), photo: false, duration: "Adentro" },
+      { plate: "KPRR17", type: "salida", when: new Date(2026, 10, 25, 9, 57), photo: true, duration: "1 h 24 min" },
+      { plate: "HLCV09", type: "entrada", when: new Date(2026, 10, 25, 9, 31), photo: true, duration: "Adentro" }
+    ];
+
+    const inside = [
+      { plate: "JDXT11", type: "entrada", when: new Date(2026, 10, 25, 10, 52), photo: true, duration: "Adentro" },
+      { plate: "GTXD80", type: "entrada", when: new Date(2026, 10, 25, 10, 18), photo: false, duration: "Adentro" },
+      { plate: "HLCV09", type: "entrada", when: new Date(2026, 10, 25, 9, 31), photo: true, duration: "Adentro" }
+    ];
+
+    function announce(message) {
+      $("liveRegion").textContent = "";
+      window.setTimeout(() => { $("liveRegion").textContent = message; }, 30);
+    }
+
+    let toastTimer;
+    function showToast(message) {
+      const toast = $("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(() => toast.classList.remove("show"), 2200);
+      announce(message);
+    }
+
+    function showView(name) {
+      Object.entries(views).forEach(([key, view]) => { view.hidden = key !== name; });
+      navButtons.forEach((button) => {
+        if (button.dataset.view === name) button.setAttribute("aria-current", "page");
+        else button.removeAttribute("aria-current");
+      });
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+
+    navButtons.forEach((button) => {
+      button.addEventListener("click", () => showView(button.dataset.view));
+    });
+
+    function createRecord(record) {
+      const article = document.createElement("article");
+      article.className = "record";
+
+      const photo = document.createElement("div");
+      photo.className = record.photo ? "record-photo" : "record-photo no-photo";
+      photo.setAttribute("aria-hidden", "true");
+      if (!record.photo) photo.textContent = "Sin foto";
+
+      const main = document.createElement("div");
+      main.className = "record-main";
+      const plate = document.createElement("div");
+      plate.className = "record-plate";
+      plate.textContent = record.plate;
+      const time = document.createElement("div");
+      time.className = "record-time";
+      time.textContent = formatTime.format(record.when);
+      const meta = document.createElement("div");
+      meta.className = "record-meta";
+      meta.textContent = record.duration;
+      main.append(plate, time, meta);
+
+      const badge = document.createElement("span");
+      badge.className = "badge " + record.type;
+      badge.textContent = record.type === "entrada" ? "Entrada" : "Salida";
+      article.append(photo, main, badge);
+      return article;
+    }
+
+    function renderRecords(list, container, filter = "todos", query = "") {
+      container.textContent = "";
+      const normalized = query.trim().toUpperCase();
+      const filtered = list.filter((record) => {
+        const typeMatches = filter === "todos" || record.type === filter;
+        const queryMatches = !normalized || record.plate.includes(normalized);
+        return typeMatches && queryMatches;
+      });
+      if (!filtered.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        const title = document.createElement("strong");
+        title.textContent = "Sin resultados";
+        const body = document.createElement("span");
+        body.textContent = "Prueba otra patente o cambia el filtro.";
+        empty.append(title, body);
+        container.appendChild(empty);
+        return;
+      }
+      filtered.forEach((record) => container.appendChild(createRecord(record)));
+    }
+
+    let activeFilter = "todos";
+    function renderBitacora() {
+      renderRecords(records, $("listaBitacora"), activeFilter, $("buscar").value);
+    }
+    function renderAdentro() {
+      renderRecords(inside, $("listaAdentro"));
+    }
+
+    document.querySelectorAll(".segment").forEach((button) => {
+      button.addEventListener("click", () => {
+        activeFilter = button.dataset.filter;
+        document.querySelectorAll(".segment").forEach((item) => {
+          item.setAttribute("aria-pressed", String(item === button));
+        });
+        renderBitacora();
+      });
+    });
+    $("buscar").addEventListener("input", renderBitacora);
+    $("btnRefrescar").addEventListener("click", () => {
+      renderBitacora();
+      $("freshness").textContent = "Actualizado ahora";
+      showToast("Bitácora actualizada");
+    });
+
+    function beginRecognition(source) {
+      const shell = $("cameraShell");
+      shell.classList.add("scanning");
+      $("cameraStatus").textContent = "Procesando";
+      $("cameraHint").textContent = "Buscando la patente en la foto…";
+      $("btnCamara").disabled = true;
+      $("btnGaleria").disabled = true;
+      announce("Procesando la fotografía");
+
+      window.setTimeout(() => {
+        shell.classList.remove("scanning");
+        $("cameraStatus").textContent = "Lectura Lista";
+        $("cameraHint").textContent = "Revisá la patente antes de confirmar";
+        $("btnCamara").disabled = false;
+        $("btnGaleria").disabled = false;
+        revealReading();
+        $("placaLeida").value = "JDXT11";
+        $("placaLeida").focus({ preventScroll: true });
+        announce("Lectura JDXT11 lista. Confirmá o corregila.");
+        showToast(`${source}: lectura lista`);
+      }, 900);
+    }
+
+    $("btnCamara").addEventListener("click", () => beginRecognition("Foto capturada"));
+    $("btnGaleria").addEventListener("click", () => beginRecognition("Foto elegida"));
+    $("placaLeida").addEventListener("input", (event) => {
+      event.target.value = event.target.value.toUpperCase().replace(/\s+/g, "");
+    });
+
+    function resetCapture() {
+      setReadingVisible(false);
+      $("resultCard").hidden = true;
+      document.body.classList.remove("result-open");
+      $("cameraStatus").textContent = "Cámara Lista";
+      $("cameraHint").textContent = "Mantén la patente dentro del recuadro";
+      $("placaLeida").value = "JDXT11";
+    }
+    $("btnDescartar").addEventListener("click", () => {
+      resetCapture();
+      showToast("Lectura descartada");
+    });
+
+    $("btnConfirmar").addEventListener("click", () => {
+      const plate = $("placaLeida").value.trim().toUpperCase();
+      if (!plate) {
+        $("placaLeida").focus();
+        showToast("Escribe la patente antes de confirmar");
+        return;
+      }
+      setReadingVisible(false);
+      $("resultCard").hidden = false;
+      document.body.classList.add("result-open");
+      $("resultType").textContent = "Entrada";
+      $("resultPlate").textContent = plate;
+      $("resultTime").textContent = formatTime.format(new Date());
+      if (readingMode === "inline") $("resultCard").scrollIntoView({ behavior: "smooth", block: "start" });
+      announce(`Entrada de ${plate} guardada`);
+      showToast("Entrada guardada");
+    });
+
+    $("btnOtro").addEventListener("click", () => {
+      resetCapture();
+      $("btnCamara").focus();
+    });
+
+    const dialog = $("manualDialog");
+    $("btnManual").addEventListener("click", () => {
+      $("placaManual").value = "";
+      dialog.showModal();
+      window.setTimeout(() => $("placaManual").focus(), 50);
+    });
+    $("btnCerrarManual").addEventListener("click", () => dialog.close());
+    $("placaManual").addEventListener("input", (event) => {
+      event.target.value = event.target.value.toUpperCase().replace(/\s+/g, "");
+    });
+    $("manualForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const plate = $("placaManual").value.trim().toUpperCase();
+      if (!plate) return;
+      dialog.close();
+      revealReading();
+      $("placaLeida").value = plate;
+      announce(`Patente ${plate} anotada. Revisá y confirmá.`);
+      showToast("Patente anotada");
+    });
+
+    renderBitacora();
+    renderAdentro();
+  </script>
+</body>
+</html>

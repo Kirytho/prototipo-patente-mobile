@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<title>Variante Nocturno — Control de acceso</title>
+<style>
+:root{
+  --bg:#14171c; --surface:#1c2129; --surface-2:#242b35; --ink:#ece8e0; --muted:#9a9a93;
+  --line:#333a44; --line-strong:#4a535f; --primary:#f2b134; --primary-dark:#c8891a;
+  --entry:#57a773; --entry-soft:#1c2e22; --exit:#e06a42; --exit-soft:#35201a;
+  --warn:#e8b44a; --warn-soft:#332913; --danger:#e2604a; --focus:#f2b134;
+  --radius:16px; --tap:48px; --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{min-height:100%;background:var(--bg);-webkit-text-size-adjust:100%}
+body{
+  margin:0;min-height:100dvh;color:var(--ink);
+  background:radial-gradient(circle at 100% 0%,rgb(242 177 52 / 7%),transparent 26rem),var(--bg);
+  font:15px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  -webkit-tap-highlight-color:rgb(56 189 248 / 14%);
+}
+[hidden]{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.skip-link{position:fixed;top:8px;left:8px;z-index:100;min-height:44px;padding:10px 14px;border-radius:10px;color:#06101f;background:var(--primary);transform:translateY(-150%)}
+.skip-link:focus{transform:translateY(0)}
+button,input{font:inherit}button{cursor:pointer;touch-action:manipulation}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.app{width:min(100%,500px);min-height:100dvh;margin:0 auto;padding:calc(var(--safe-top) + 14px) 16px calc(118px + var(--safe-bottom))}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brand-mark{display:grid;width:42px;height:42px;flex:0 0 auto;place-items:center;border:1px solid var(--primary);border-radius:6px;background:var(--primary);color:var(--bg)}
+.brand-mark svg{width:24px;height:24px}
+.brand-copy strong{display:block;font-size:.94rem;letter-spacing:.02em}
+.brand-copy span{display:block;margin-top:2px;color:var(--muted);font-size:.68rem}
+.prototype-chip{flex:0 0 auto;padding:5px 9px;border:1px solid var(--primary);border-radius:6px;color:var(--primary);background:rgb(242 177 52 / 10%);font-size:.62rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.eyebrow{margin:0 0 6px;color:var(--primary);font-size:.68rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
+h1,h2,p{margin-top:0}
+h1{max-width:13ch;margin-bottom:8px;font-size:clamp(1.8rem,8vw,2.3rem);line-height:1.02;letter-spacing:-.03em}
+.lede{max-width:38ch;margin-bottom:20px;color:var(--muted);font-size:.84rem}
+.section-gap{margin-top:18px}
+.card{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:0 0 0 1px rgb(0 0 0 / 20%)}
+.capture-card{padding:12px}
+.camera-shell{position:relative;height:clamp(180px,32dvh,280px);overflow:hidden;border-radius:12px;color:#dce8f6;
+  background:linear-gradient(180deg,rgb(6 12 22 / 25%),rgb(6 12 22 / 78%)),linear-gradient(135deg,#12233a 0%,#0d1a2c 55%,#091420 100%);isolation:isolate}
+.camera-shell::after{position:absolute;inset:0;z-index:-1;content:"";background:linear-gradient(90deg,transparent 49.8%,rgb(56 189 248 / 9%) 50%,transparent 50.2%),linear-gradient(0deg,transparent 49.8%,rgb(56 189 248 / 9%) 50%,transparent 50.2%)}
+.camera-topline{position:absolute;top:12px;left:12px;right:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.camera-status{display:inline-flex;min-height:30px;align-items:center;gap:7px;padding:5px 10px;border:1px solid rgb(56 189 248 / 30%);border-radius:6px;background:rgb(6 14 26 / 60%);font-size:.7rem;font-weight:800;letter-spacing:.04em}
+.camera-status::before{width:8px;height:8px;border-radius:50%;background:#f2b134;box-shadow:0 0 0 4px rgb(242 177 52 / 18%);content:""}
+.camera-index{color:rgb(220 232 246 / 65%);font-size:.68rem}
+.guide{position:absolute;top:28%;right:11%;bottom:23%;left:11%;border:1px solid rgb(56 189 248 / 25%);border-radius:10px}
+.corner{position:absolute;width:28px;height:28px;border-color:var(--primary);border-style:solid}
+.corner.tl{top:-2px;left:-2px;border-width:3px 0 0 3px;border-radius:9px 0 0}
+.corner.tr{top:-2px;right:-2px;border-width:3px 3px 0 0;border-radius:0 9px 0 0}
+.corner.bl{bottom:-2px;left:-2px;border-width:0 0 3px 3px;border-radius:0 0 0 9px}
+.corner.br{right:-2px;bottom:-2px;border-width:0 3px 3px 0;border-radius:0 0 9px}
+.vehicle{position:absolute;top:48%;left:50%;width:min(76%,320px);transform:translate(-50%,-50%);color:#5b7290}
+.vehicle svg{display:block;width:100%;height:auto}
+.camera-hint{position:absolute;right:14px;bottom:12px;left:14px;margin:0;color:rgb(220 232 246 / 78%);font-size:.7rem;text-align:center}
+.scanning .guide{border-color:var(--primary);animation:scan-pulse 1s ease-in-out infinite alternate}
+.scanning .guide::after{position:absolute;top:0;right:8px;left:8px;height:2px;content:"";background:linear-gradient(90deg,transparent,#f2b134,transparent);animation:scan-line 1s linear infinite}
+@keyframes scan-pulse{to{transform:scale(.985);opacity:.75}}
+@keyframes scan-line{from{top:5%}to{top:95%}}
+.capture-actions{display:grid;grid-template-columns:1.2fr 1fr;gap:10px;margin-top:12px}
+.btn{display:inline-flex;min-height:var(--tap);align-items:center;justify-content:center;gap:8px;padding:11px 13px;border:1px solid transparent;border-radius:10px;font-weight:800;font-size:.82rem;letter-spacing:.02em;transition:transform 120ms,background-color 120ms}
+.btn:active{transform:scale(.985)}.btn svg{width:19px;height:19px;flex:0 0 auto}
+.btn-primary{color:#14171c;background:var(--primary)}
+.btn-secondary{border-color:var(--line-strong);color:var(--ink);background:var(--surface-2)}
+.btn-success{color:#04160f;background:var(--entry)}
+.btn-danger{border-color:rgb(248 113 113 / 40%);color:var(--danger);background:rgb(248 113 113 / 8%)}
+.btn-block{width:100%}
+.btn-quiet{min-height:var(--tap);border:0;color:var(--primary-dark);background:transparent;font-weight:800;font-size:.8rem}
+.capture-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:6px;border-top:1px solid var(--line);padding-top:6px}
+.capture-foot span{color:var(--muted);font-size:.68rem}
+.reading-card{overflow:hidden;border:1px solid var(--line-strong);border-radius:var(--radius);background:var(--surface)}
+.reading-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.reading-head strong{font-size:.84rem}.reading-head span{color:var(--muted);font-size:.68rem}
+.plate-frame{position:relative;margin:14px;overflow:hidden;border:2px solid var(--ink);border-radius:10px;background:#f4f7fb}
+.plate-country{padding:6px 34px 4px;border-bottom:2px solid var(--ink);color:var(--primary-dark);background:#e6f5ff;font-size:.64rem;font-weight:900;letter-spacing:.24em;text-align:center;text-transform:uppercase}
+.plate-input{width:100%;min-height:70px;border:0;border-radius:0;color:#0b1220;background:#fff;font-family:inherit;font-size:clamp(1.9rem,10vw,2.5rem);font-weight:900;letter-spacing:.1em;text-align:center;text-transform:uppercase}
+.plate-input:focus{outline-offset:-5px}
+.reading-note{display:flex;align-items:flex-start;gap:9px;margin:0 14px 14px;padding:10px 11px;border:1px solid rgb(251 191 36 / 40%);border-radius:10px;color:#f8d37a;background:var(--warn-soft);font-size:.72rem}
+.reading-note svg{width:19px;height:19px;flex:0 0 auto}.reading-note strong{display:block;margin-bottom:2px;color:var(--warn)}
+.reading-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px 14px}
+.result-card{overflow:hidden;border:1px solid rgb(52 211 153 / 50%);border-radius:20px;background:var(--entry);color:#04160f;box-shadow:0 16px 40px rgb(52 211 153 / 14%)}
+.result-card.salida{background:var(--exit);border-color:rgb(251 113 133 / 50%);color:#2a0a12}
+.result-stripe{height:8px;background:repeating-linear-gradient(135deg,#f2b134 0 12px,#14171c 12px 24px)}
+.result-body{padding:22px 18px 18px;text-align:center}
+.result-body p{margin-bottom:4px;opacity:.75;font-size:.72rem}
+.result-type{margin-bottom:10px;font-size:clamp(2.2rem,13vw,3.2rem);font-weight:900;letter-spacing:.08em;line-height:.95}
+.result-plate{margin-bottom:8px;font-size:clamp(2.1rem,11vw,2.8rem);font-weight:900;letter-spacing:.1em}
+.result-time{font-variant-numeric:tabular-nums;font-size:.8rem}
+.result-body .btn{margin-top:18px;color:#04160f;background:#fff}
+.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.search-wrap{position:relative;flex:1;min-width:0}
+.search-wrap svg{position:absolute;top:50%;left:13px;width:19px;height:19px;color:var(--muted);pointer-events:none;transform:translateY(-50%)}
+.search-input{width:100%;min-height:var(--tap);padding:10px 12px 10px 40px;border:1px solid var(--line-strong);border-radius:10px;color:var(--ink);background:var(--surface);font-size:.86rem}
+.search-input::placeholder{color:#5f7390}
+.icon-btn{display:inline-grid;width:var(--tap);height:var(--tap);flex:0 0 auto;place-items:center;border:1px solid var(--line-strong);border-radius:10px;color:var(--ink);background:var(--surface)}
+.icon-btn svg{width:20px;height:20px}
+.segments{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:14px;padding:4px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)}
+.segment{min-height:42px;border:0;border-radius:7px;color:var(--muted);background:transparent;font-weight:800;font-size:.72rem}
+.segment[aria-pressed="true"]{color:#06101f;background:var(--primary)}
+.refresh-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0 14px;color:var(--muted);font-size:.68rem}
+.record-list{display:grid;gap:10px}
+.record{display:grid;grid-template-columns:58px minmax(0,1fr) auto;align-items:center;gap:11px;min-height:78px;padding:9px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.record-photo{position:relative;display:grid;width:58px;height:58px;place-items:center;overflow:hidden;border-radius:8px;color:#cfe0f2;background:linear-gradient(180deg,rgb(6 12 22 / 6%),rgb(6 12 22 / 50%)),linear-gradient(135deg,#223650,#122238)}
+.record-photo::after{width:38px;height:12px;border:2px solid rgb(255 255 255 / 80%);border-radius:4px;background:#e8eef8;content:""}
+.record-photo.no-photo{color:#b9c8da;background:var(--surface-2);font-size:.56rem;font-weight:800;letter-spacing:.06em}
+.record-photo.no-photo::after{display:none}
+.record-main{min-width:0}
+.record-plate{overflow:hidden;margin-bottom:3px;font-size:1.08rem;font-weight:900;letter-spacing:.06em;text-overflow:ellipsis;white-space:nowrap}
+.record-time{overflow:hidden;color:var(--muted);font-size:.7rem;text-overflow:ellipsis;white-space:nowrap}
+.record-meta{color:var(--muted);font-size:.64rem}
+.badge{display:inline-flex;min-height:26px;align-items:center;padding:4px 8px;border-radius:6px;color:#04160f;font-size:.6rem;font-weight:900;white-space:nowrap}
+.badge.entrada,.badge.adentro{background:var(--entry)}.badge.salida{color:#2a0a12;background:var(--exit)}
+.empty{padding:28px 16px;border:1px dashed var(--line-strong);border-radius:12px;color:var(--muted);background:var(--surface-2);text-align:center;font-size:.76rem}
+.empty strong{display:block;margin-bottom:4px;color:var(--ink)}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.metric{padding:12px 8px;border:1px solid var(--line);border-radius:12px;background:var(--surface);text-align:center}
+.metric strong{display:block;font-size:1.5rem;line-height:1}
+.metric span{display:block;margin-top:5px;color:var(--muted);font-size:.6rem;font-weight:800;text-transform:uppercase}
+.metric.primary{border-color:var(--primary);background:rgb(242 177 52 / 10%)}.metric.primary strong{color:var(--primary)}
+.bottom-nav{position:fixed;right:0;bottom:0;left:0;z-index:20;width:min(100%,500px);margin:0 auto;padding:7px 12px calc(7px + var(--safe-bottom));border-top:1px solid var(--line);background:rgb(11 18 32 / 96%);backdrop-filter:blur(14px)}
+.nav-list{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:0;padding:0;list-style:none}
+.nav-button{display:flex;min-height:56px;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:5px;border:0;border-radius:9px;color:var(--muted);background:transparent;font-size:.64rem;font-weight:800}
+.nav-button svg{width:21px;height:21px}
+.nav-button[aria-current="page"]{color:#14171c;background:var(--primary)}
+dialog{width:min(100% - 24px,470px);margin:auto auto 0;padding:0;border:0;border-radius:18px 18px 0 0;color:var(--ink);background:var(--surface);box-shadow:0 18px 45px rgb(0 0 0 / 50%)}
+dialog::backdrop{background:rgb(3 8 16 / 70%);backdrop-filter:blur(2px)}
+.sheet-handle{width:42px;height:5px;margin:9px auto 3px;border-radius:999px;background:var(--line-strong)}
+.sheet-body{padding:14px 18px calc(20px + var(--safe-bottom))}
+.sheet-body h2{margin-bottom:6px;font-size:1.05rem}.sheet-body p{margin-bottom:14px;color:var(--muted);font-size:.78rem}
+.field-label{display:block;margin-bottom:7px;font-size:.74rem;font-weight:800}
+.manual-input{width:100%;min-height:56px;padding:10px 12px;border:2px solid var(--line-strong);border-radius:9px;color:var(--ink);background:var(--bg);font-family:inherit;font-size:1.15rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.sheet-actions{display:grid;grid-template-columns:1fr 1.3fr;gap:10px;margin-top:14px}
+.toast{position:fixed;right:14px;bottom:calc(88px + var(--safe-bottom));left:14px;z-index:30;width:min(100% - 28px,450px);margin:0 auto;padding:11px 13px;border:1px solid var(--line-strong);border-radius:9px;color:var(--ink);background:var(--surface-2);box-shadow:0 12px 30px rgb(0 0 0 / 40%);font-size:.74rem;font-weight:800;text-align:center;opacity:0;pointer-events:none;transform:translateY(12px);transition:opacity 160ms,transform 160ms}
+.toast.show{opacity:1;transform:translateY(0)}
+.autor{width:100%;padding:16px 0 0;color:var(--muted);font-size:.68rem;text-align:center;letter-spacing:.02em}
+/* La cámara se convierte en la lectura: no se agrega nada abajo. */
+body[data-reading-mode="replace"].reading-open .capture-card,
+body[data-reading-mode="replace"].result-open .capture-card{display:none}
+body[data-reading-mode="replace"] #readingCard.section-gap,
+body[data-reading-mode="replace"] #resultCard.section-gap{margin-top:0}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body data-reading-mode="replace">
+<a class="skip-link" href="#contenido">Saltar al contenido</a>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="M7 9h10M7 12h7M7 15h4"></path></svg></span>
+      <span class="brand-copy"><strong>Control de acceso</strong><span>Estacionamiento · modo consola</span></span>
+    </div>
+    <span class="prototype-chip">Prototipo</span>
+  </header>
+
+  <main id="contenido" tabindex="-1">
+    <section class="view" id="vista-capturar" aria-labelledby="titulo-capturar">
+      <p class="eyebrow">Nuevo movimiento</p>
+      <h1 id="titulo-capturar">Registra el vehículo</h1>
+      <p class="lede">Encuadra la patente. La lectura siempre se confirma antes de guardarse.</p>
+      <div class="card capture-card">
+        <div class="camera-shell" id="cameraShell">
+          <div class="camera-topline"><span class="camera-status" id="cameraStatus">Cámara Lista</span><span class="camera-index">1 / 1</span></div>
+          <div class="guide" aria-hidden="true"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i></div>
+          <div class="vehicle" aria-hidden="true"><svg viewBox="0 0 320 180" fill="none"><path d="M38 113 58 70c6-12 18-20 32-20h140c14 0 26 8 32 20l20 43v28c0 9-7 16-16 16H54c-9 0-16-7-16-16v-28Z" fill="currentColor" opacity=".9"></path><path d="m74 67 12-22h148l12 22H74Z" fill="#334C68"></path><rect x="103" y="89" width="114" height="37" rx="6" fill="#F6F8FA"></rect><text x="160" y="114" text-anchor="middle" fill="#10213A" font-family="Arial, sans-serif" font-size="23" font-weight="800" letter-spacing="3">JDXT11</text><circle cx="68" cy="157" r="17" fill="#07111E"></circle><circle cx="252" cy="157" r="17" fill="#07111E"></circle></svg></div>
+          <p class="camera-hint" id="cameraHint">Mantén la patente dentro del recuadro</p>
+        </div>
+        <div class="capture-actions">
+          <button class="btn btn-primary" id="btnCamara" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h4l2-3h4l2 3h4v12H4V7Z"></path><circle cx="12" cy="13" r="4"></circle></svg>Tomar Foto</button>
+          <button class="btn btn-secondary" id="btnGaleria" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="8" cy="9" r="2"></circle><path d="m21 15-5-5L5 20"></path></svg>Elegir Foto</button>
+        </div>
+        <div class="capture-foot"><button class="btn-quiet" id="btnManual" type="button">Anotar Patente</button><span>Datos simulados</span></div>
+      </div>
+
+      <div class="reading-card section-gap" id="readingCard" hidden aria-labelledby="readingTitle">
+        <div class="reading-head"><strong id="readingTitle">Revisa la lectura</strong><span>Resultado del modelo</span></div>
+        <div class="plate-frame"><div class="plate-country">Chile</div><label class="sr-only" for="placaLeida">Patente leída</label><input class="plate-input" id="placaLeida" name="placa_leida" value="JDXT11" autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="text"></div>
+        <div class="reading-note" role="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3 2.8 20h18.4L12 3Z"></path><path d="M12 9v5M12 17.5v.1"></path></svg><span><strong>Confirmación manual obligatoria.</strong> Corrige la patente si la lectura no coincide con el vehículo.</span></div>
+        <div class="reading-actions"><button class="btn btn-danger" id="btnDescartar" type="button">Descartar</button><button class="btn btn-success" id="btnConfirmar" type="button">Confirmar Entrada</button></div>
+      </div>
+
+      <div class="result-card section-gap" id="resultCard" hidden aria-labelledby="resultType">
+        <div class="result-stripe" aria-hidden="true"></div>
+        <div class="result-body"><p>Movimiento guardado</p><div class="result-type" id="resultType">Entrada</div><div class="result-plate" id="resultPlate">JDXT11</div><div class="result-time" id="resultTime">25 nov 2026 · 10:52</div><button class="btn btn-block" id="btnOtro" type="button">Registrar Otro</button></div>
+      </div>
+    </section>
+
+    <section class="view" id="vista-bitacora" aria-labelledby="titulo-bitacora" hidden>
+      <p class="eyebrow">Movimientos</p><h1 id="titulo-bitacora">Bitácora</h1><p class="lede">Consulta los ingresos y salidas registrados.</p>
+      <div class="toolbar">
+        <div class="search-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><label class="sr-only" for="buscar">Buscar por patente</label><input class="search-input" id="buscar" name="buscar" placeholder="Buscar por patente…" autocomplete="off" autocapitalize="characters" spellcheck="false"></div>
+        <button class="icon-btn" id="btnRefrescar" type="button" aria-label="Actualizar bitácora"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 7v5h-5"></path><path d="M4 17v-5h5"></path><path d="M6.1 8a7 7 0 0 1 11.4-2.2L20 8M4 16l2.5 2.2A7 7 0 0 0 17.9 16"></path></svg></button>
+      </div>
+      <div class="segments" role="group" aria-label="Filtrar movimientos"><button class="segment" type="button" data-filter="todos" aria-pressed="true">Todos</button><button class="segment" type="button" data-filter="entrada" aria-pressed="false">Entradas</button><button class="segment" type="button" data-filter="salida" aria-pressed="false">Salidas</button></div>
+      <div class="refresh-row"><span id="freshness">Actualizado ahora</span><span>Datos simulados</span></div>
+      <div class="record-list" id="listaBitacora"></div>
+    </section>
+
+    <section class="view" id="vista-adentro" aria-labelledby="titulo-adentro" hidden>
+      <p class="eyebrow">Ocupación actual</p><h1 id="titulo-adentro">Quién está adentro</h1><p class="lede">Vehículos con un movimiento de entrada sin salida posterior.</p>
+      <div class="summary-grid"><div class="metric primary"><strong>3</strong><span>Adentro</span></div><div class="metric"><strong>12</strong><span>Entradas</span></div><div class="metric"><strong>9</strong><span>Salidas</span></div></div>
+      <div class="record-list" id="listaAdentro"></div>
+    </section>
+  </main>
+  <footer class="autor">© 2026 Desarrollado por Fernando Zapata Figueroa</footer>
+</div>
+
+<nav class="bottom-nav" aria-label="Navegación principal">
+  <ul class="nav-list">
+    <li><button class="nav-button" type="button" data-view="capturar" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h4l2-3h4l2 3h4v12H4V7Z"></path><circle cx="12" cy="13" r="4"></circle></svg>Capturar</button></li>
+    <li><button class="nav-button" type="button" data-view="bitacora"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6M9 16h4"></path></svg>Bitácora</button></li>
+    <li><button class="nav-button" type="button" data-view="adentro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 16V9l2-4h10l2 4v7"></path><path d="M3 16h18v3H3zM7 12h10"></path></svg>Adentro</button></li>
+  </ul>
+</nav>
+
+<dialog id="manualDialog" aria-labelledby="manualTitle">
+  <div class="sheet-handle" aria-hidden="true"></div>
+  <form class="sheet-body" id="manualForm" method="dialog">
+    <h2 id="manualTitle">Anotar patente</h2><p>Úsalo cuando la cámara no pueda tomar una foto legible.</p>
+    <label class="field-label" for="placaManual">Patente del vehículo</label>
+    <input class="manual-input" id="placaManual" name="placa_manual" placeholder="AB1234" autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="text" required>
+    <div class="sheet-actions"><button class="btn btn-danger" id="btnCerrarManual" type="button">Cancelar</button><button class="btn btn-success" type="submit">Registrar Entrada</button></div>
+  </form>
+</dialog>
+<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+<div class="sr-only" id="liveRegion" aria-live="polite" aria-atomic="true"></div>
+<script src="prototipo-logica.js"></script>
+</body>
+</html>
