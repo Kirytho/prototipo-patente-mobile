@@ -59,6 +59,16 @@
   }
   .view { height: 100%; overflow: hidden; }
 
+  /* Capturar es pantalla fija; Bitácora y Adentro son registros:
+     son las ÚNICAS vistas con scroll interno para poder ver todas las filas. */
+  #vista-bitacora,
+  #vista-adentro {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
   /* Captura: dos columnas estables. La cámara NUNCA se oculta al confirmar;
      el panel derecho ya está reservado para lectura/resultado. */
   #vista-capturar {
@@ -119,7 +129,7 @@
   .summary-grid { margin-bottom: 6px !important; }
   .metric { padding: 8px 5px !important; }
   .metric strong { font-size: 1.2rem !important; }
-  .record-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px !important; overflow: hidden; }
+  .record-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px !important; overflow: visible; }
   .record { min-height: 48px !important; padding: 4px 6px !important; }
   .record-photo { width: 38px !important; height: 38px !important; }
 
