@@ -115,6 +115,17 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
   #vista-capturar > .eyebrow { grid-column: 1 !important; grid-row: 1 !important; align-self: end; margin: 0 !important; }
   #vista-capturar > h1 { grid-column: 1 !important; grid-row: 2 !important; align-self: start; margin: 0 !important; }
   #vista-capturar > .lede { grid-column: 2 !important; grid-row: 1 / span 2 !important; align-self: center; margin: 0 !important; }
+  /* Una sola línea cada uno: liberamos altura para cámara y revisión. */
+  #vista-capturar > h1 {
+    max-width: none !important;
+    white-space: nowrap !important;
+    font-size: .95rem !important;
+  }
+  #vista-capturar > .lede {
+    max-width: none !important;
+    white-space: nowrap !important;
+    font-size: .48rem !important;
+  }
   /* Las variantes tenían su propia regla grid-row:2 con mayor especificidad. */
   body[data-reading-mode] .capture-card,
   body[data-reading-mode] #readingCard,
@@ -232,6 +243,8 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
   .topbar { padding: 3px 8px !important; }
   .bottom-nav { height: calc(30px + env(safe-area-inset-bottom, 0px)); }
   .nav-button { min-height: 26px !important; font-size: .46rem !important; }
+  #vista-capturar > h1 { font-size: .85rem !important; }
+  #vista-capturar > .lede { font-size: .43rem !important; }
   .btn { min-height: 30px !important; }
   .plate-input { min-height: 36px !important; }
   .record-photo { display: none !important; }
