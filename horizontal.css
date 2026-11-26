@@ -5,6 +5,10 @@
   /* El atributo hidden debe ganar siempre sobre nuestros display:flex. */
   [hidden] { display: none !important; }
   #readingCard[hidden], #resultCard[hidden], .capture-card[hidden] { display: none !important; }
+  /* Sin esto, #vista-capturar{display:grid!important} gana sobre [hidden] y
+     la vista oculta sigue ocupando altura, empujando Bitácora/Adentro fuera
+     de la pantalla. */
+  #vista-capturar[hidden], #vista-bitacora[hidden], #vista-adentro[hidden] { display: none !important; }
 
   html, body {
     height: 100%;
