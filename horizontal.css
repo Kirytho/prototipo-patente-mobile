@@ -1,18 +1,129 @@
-/* Ajuste de orientación: en horizontal la app ocupa TODO el ancho.
-   Se carga después del <style> de cada variante para poder sobreescribirlo. */
+/* Layout a pantalla fija para horizontal / pantallas bajas.
+   Se carga después del <style> de cada variante para poder sobreescribirlo.
+   La resolución real la publica responsive.js en data-orientation / data-short. */
 @media (orientation: landscape) {
-  html, body { width: 100%; max-width: none; }
+  /* El atributo hidden debe ganar siempre sobre nuestros display:flex. */
+  [hidden] { display: none !important; }
+  #readingCard[hidden], #resultCard[hidden], .capture-card[hidden] { display: none !important; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden !important;
+    overscroll-behavior: none;
+  }
 
   .app {
     width: 100% !important;
     max-width: none !important;
     margin: 0 !important;
-    padding-left: 12px !important;
-    padding-right: 12px !important;
+    height: 100dvh;
+    padding: 6px 10px 58px !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
-  .app > * { max-width: none; }
 
-  /* La nav deja de ser una “pill” centrada y pasa a ser barra completa. */
+  /* La variante Consola tiene rail + contenido: ahí el flex va en .content. */
+  .app:has(.rail) {
+    display: grid !important;
+    grid-template-columns: 54px minmax(0, 1fr) !important;
+    gap: 8px;
+  }
+  .app:has(.rail) .content {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* Cabecera y textos decorativos: lo justo para no robar altura. */
+  .topbar {
+    flex: 0 0 auto;
+    margin: 0 0 6px !important;
+    padding: 6px 10px !important;
+  }
+  .brand-mark { width: 30px !important; height: 30px !important; }
+  .brand-mark svg, .brand-mark img { width: 20px !important; height: 20px !important; }
+  .brand-copy strong { font-size: .82rem !important; }
+  .brand-copy span { font-size: .56rem !important; }
+  h1 { font-size: 1.25rem !important; margin-bottom: 4px !important; line-height: 1.05 !important; }
+  .eyebrow, .lede, .autor, .camera-hint, .refresh-row, .capture-foot span { display: none !important; }
+
+  main, #contenido {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: hidden !important;
+    width: 100%;
+  }
+  .view { height: 100%; overflow: hidden; }
+
+  /* Captura: dos columnas estables. La cámara NUNCA se oculta al confirmar;
+     el panel derecho ya está reservado para lectura/resultado. */
+  #vista-capturar {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    gap: 10px;
+    align-items: stretch;
+  }
+  .capture-card {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+    height: 100%;
+    display: flex !important;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 8px !important;
+  }
+  .camera-shell {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto !important;
+  }
+  .camera-topline { top: 8px; left: 8px; right: 8px; }
+  .vehicle { width: min(70%, 280px); }
+  .capture-actions { flex: 0 0 auto; grid-column: auto !important; gap: 6px; margin-top: 6px !important; }
+  .capture-foot { flex: 0 0 auto; grid-column: auto !important; margin-top: 4px !important; padding-top: 4px !important; }
+  .btn { min-height: 40px !important; padding: 6px 8px !important; font-size: .72rem !important; }
+
+  #readingCard, #resultCard {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    height: 100%;
+    margin: 0 !important;
+    overflow: hidden;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .reading-head { padding: 5px 8px !important; }
+  .plate-frame { margin: 6px !important; }
+  .plate-input { min-height: 52px !important; font-size: clamp(1.5rem, 5vw, 2.4rem) !important; }
+  .reading-note { margin: 0 6px 6px !important; padding: 6px 8px !important; font-size: .64rem !important; }
+  .reading-actions { padding: 0 6px 6px !important; }
+  .result-body { padding: 10px 8px !important; }
+  .result-type { font-size: clamp(1.6rem, 6vw, 2.6rem) !important; margin-bottom: 5px !important; }
+  .result-plate { font-size: clamp(1.5rem, 5vw, 2.3rem) !important; margin-bottom: 5px !important; }
+  .result-body .btn { margin-top: 8px !important; min-height: 38px !important; }
+
+  /* Bitácora y Adentro: dos columnas y filas compactas, sin scroll. */
+  #vista-bitacora, #vista-adentro { display: block; }
+  .toolbar { margin-bottom: 6px !important; }
+  .search-input, .icon-btn { min-height: 38px !important; height: 38px !important; }
+  .segments { margin-bottom: 6px !important; padding: 2px !important; }
+  .segment { min-height: 34px !important; }
+  .summary-grid { margin-bottom: 6px !important; }
+  .metric { padding: 8px 5px !important; }
+  .metric strong { font-size: 1.2rem !important; }
+  .record-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px !important; overflow: hidden; }
+  .record { min-height: 48px !important; padding: 4px 6px !important; }
+  .record-photo { width: 38px !important; height: 38px !important; }
+
+  /* Nav inferior: barra baja y fija, no una pill que come altura. */
   .bottom-nav {
     position: fixed !important;
     top: auto !important;
@@ -21,36 +132,25 @@
     right: 0 !important;
     width: auto !important;
     max-width: none !important;
+    height: 52px;
     margin: 0 !important;
+    padding: 3px 8px !important;
     border-radius: 0 !important;
   }
+  .nav-list { height: 100%; }
+  .nav-button { min-height: 42px !important; font-size: .58rem !important; gap: 1px !important; padding: 2px !important; }
+  .nav-button svg { width: 17px !important; height: 17px !important; }
+  .toast { bottom: 58px !important; }
+}
 
-  /* Captura: cámara y confirmación/resultado lado a lado. */
-  #vista-capturar,
-  #vista-bitacora,
-  #vista-adentro { width: 100%; }
-
-  #vista-capturar {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 14px;
-    align-items: start;
-  }
-  #vista-capturar > .eyebrow,
-  #vista-capturar > h1,
-  #vista-capturar > .lede { grid-column: 1 / -1; }
-
-  .capture-card { grid-column: 1; grid-row: 2; min-width: 0; }
-  #readingCard,
-  #resultCard { grid-column: 2; grid-row: 2; min-width: 0; margin-top: 0 !important; }
-
-  /* En modo hoja (Natural) la confirmación flota: la cámara usa todo el ancho. */
-  body.sheet-open #vista-capturar { display: block !important; }
-
-  /* Listados y métricas también aprovechan el ancho. */
-  .record-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .summary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-
-  /* La cámara puede crecer sin el tope de altura de retrato. */
-  .camera-shell { height: clamp(170px, 42dvh, 320px); }
+/* Pantallas realmente bajas (667x375, 568x320…): aprieta un poco más. */
+@media (orientation: landscape) and (max-height: 420px) {
+  .app { padding-top: 4px !important; padding-bottom: 48px !important; }
+  .topbar { padding: 4px 8px !important; }
+  .bottom-nav { height: 44px; }
+  .nav-button { min-height: 36px !important; }
+  .btn { min-height: 34px !important; }
+  .plate-input { min-height: 42px !important; }
+  .record-photo { display: none !important; }
+  .record { grid-template-columns: minmax(0, 1fr) auto !important; }
 }

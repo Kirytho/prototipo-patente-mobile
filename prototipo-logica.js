@@ -1,14 +1,24 @@
     const $ = (id) => document.getElementById(id);
     const readingMode = document.body.dataset.readingMode || "inline";
 
+    function isLandscapeLayout() {
+      return document.body.dataset.orientation === "landscape" || window.innerWidth > window.innerHeight;
+    }
+
     function setReadingVisible(visible) {
+      const landscape = isLandscapeLayout();
       $("readingCard").hidden = !visible;
-      document.body.classList.toggle("reading-open", visible);
-      document.body.classList.toggle("sheet-open", visible && readingMode === "sheet");
+      // En horizontal NO ocultamos la cámara: la lectura usa el panel reservado
+      // a la derecha, así el usuario no ve desaparecer el visor ni saltar el layout.
+      document.body.classList.toggle("reading-open", visible && !landscape);
+      document.body.classList.toggle("sheet-open", visible && readingMode === "sheet" && !landscape);
+      document.body.classList.toggle("panel-open", visible && landscape);
     }
     function revealReading() {
       setReadingVisible(true);
-      if (readingMode === "inline") $("readingCard").scrollIntoView({ behavior: "smooth", block: "start" });
+      if (readingMode === "inline" && !isLandscapeLayout()) {
+        $("readingCard").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }
     const views = {
       capturar: $("vista-capturar"),
@@ -169,7 +179,7 @@
     function resetCapture() {
       setReadingVisible(false);
       $("resultCard").hidden = true;
-      document.body.classList.remove("result-open");
+      document.body.classList.remove("result-open", "panel-open");
       $("cameraStatus").textContent = "Cámara Lista";
       $("cameraHint").textContent = "Mantén la patente dentro del recuadro";
       $("placaLeida").value = "JDXT11";
@@ -188,12 +198,16 @@
       }
       setReadingVisible(false);
       $("resultCard").hidden = false;
-      document.body.classList.add("result-open");
-      if (readingMode === "sheet") document.body.classList.add("sheet-open");
+      if (isLandscapeLayout()) {
+        document.body.classList.add("panel-open");
+      } else {
+        document.body.classList.add("result-open");
+        if (readingMode === "sheet") document.body.classList.add("sheet-open");
+      }
       $("resultType").textContent = "Entrada";
       $("resultPlate").textContent = plate;
       $("resultTime").textContent = formatTime.format(new Date());
-      if (readingMode === "inline") $("resultCard").scrollIntoView({ behavior: "smooth", block: "start" });
+      if (readingMode === "inline" && !isLandscapeLayout()) $("resultCard").scrollIntoView({ behavior: "smooth", block: "start" });
       announce(`Entrada de ${plate} guardada`);
       showToast("Entrada guardada");
     });
