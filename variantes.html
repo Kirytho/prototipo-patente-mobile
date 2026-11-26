@@ -23,6 +23,9 @@ h1{margin:0 0 6px;font-size:2rem;letter-spacing:-.03em}
 .s-natural{background:linear-gradient(135deg,#eef2f5 0%,#a8c2da 100%)}
 .s-soft{background:linear-gradient(135deg,#eceae5 0%,#c4432f 145%)}
 .s-inacap{background:linear-gradient(135deg,#ffffff 0%,#e22138 150%)}
+.s-instrumento{background:linear-gradient(135deg,#e6e9ea 0%,#0f6b63 150%)}
+.s-boleta{background:linear-gradient(135deg,#d9d3c6 0%,#fbfaf5 150%)}
+.s-libro{background:linear-gradient(135deg,#f2f0e9 0%,#2f4f6f 150%)}
 .body{padding:16px 18px 18px}
 .name{margin:0 0 6px;font-size:1.1rem}
 .desc{margin:0 0 12px;color:var(--muted);font-size:.84rem}
@@ -35,7 +38,7 @@ code{background:#e4ebf3;padding:2px 5px;border-radius:5px}
 <body>
 <div class="wrap">
   <h1>Variantes del prototipo</h1>
-  <p class="lede">Cinco diseños con la <strong>misma lógica</strong> (captura → lectura → confirmación, bitácora y ocupación). Cambia la paleta, la tipografía y la distribución. Elegí la que mejor funcione y la llevamos al prototipo final.</p>
+  <p class="lede">Ocho diseños con la <strong>misma lógica</strong> (captura → lectura → confirmación, bitácora y ocupación). Cambia la paleta, la tipografía y la distribución. Elegí la que mejor funcione y la llevamos al prototipo final.</p>
 
   <div class="grid">
     <a class="card" href="lector-patente-mobile-prototype.html">
@@ -81,9 +84,36 @@ code{background:#e4ebf3;padding:2px 5px;border-radius:5px}
         <div class="tags"><span class="tag">Rojo INACAP</span><span class="tag">Técnico</span><span class="tag">Reemplazo</span></div>
       </div>
     </a>
+
+    <a class="card" href="variante-instrumento.html">
+      <div class="swatch s-instrumento"></div>
+      <div class="body">
+        <h2 class="name">E · Instrumento</h2>
+        <p class="desc">Chapas recortadas con <strong>clip-path</strong>, sin esquinas redondas. Slab-serif gigante contra telemetría mono micro.</p>
+        <div class="tags"><span class="tag">Recortado</span><span class="tag">Slab + mono</span><span class="tag">2 columnas</span></div>
+      </div>
+    </a>
+
+    <a class="card" href="variante-boleta.html">
+      <div class="swatch s-boleta"></div>
+      <div class="body">
+        <h2 class="name">F · Boleta</h2>
+        <p class="desc">Una cinta de papel térmico con bordes <strong>rasgados</strong> y perforaciones. Monospace de impresora, sin tarjetas.</p>
+        <div class="tags"><span class="tag">Rasgado</span><span class="tag">Térmica</span><span class="tag">Cinta</span></div>
+      </div>
+    </a>
+
+    <a class="card" href="variante-libro.html">
+      <div class="swatch s-libro"></div>
+      <div class="body">
+        <h2 class="name">G · Libro mayor</h2>
+        <p class="desc">Cero redondez: reglas de 1px y columnas tabulares. Mono para la máquina, serif itálica para la persona.</p>
+        <div class="tags"><span class="tag">Reglas</span><span class="tag">Dos fuentes</span><span class="tag">Libro abierto</span></div>
+      </div>
+    </a>
   </div>
 
-  <p class="foot">Servidas desde <code>http://localhost:8080/</code>. La lógica está en <code>prototipo-logica.js</code>, compartida por las cuatro variantes. Todas llevan el footer <em>© 2026 Desarrollado por Fernando Zapata Figueroa</em>.</p>
+  <p class="foot">Servidas desde <code>http://localhost:8080/</code>. La lógica está en <code>prototipo-logica.js</code>, compartida por las siete variantes. Todas llevan el footer <em>© 2026 Desarrollado por Fernando Zapata Figueroa</em>.</p>
 </div>
 </body>
 </html>
