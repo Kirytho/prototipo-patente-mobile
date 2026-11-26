@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1120">
+<title>Variante Bento — Control de acceso</title>
+<style>
+:root{
+  --bg:#0b1120; --tile:rgba(255 255 255 / 6%); --tile-2:rgba(255 255 255 / 10%);
+  --edge:rgba(255 255 255 / 14%); --ink:#f8fafc; --muted:#94a3b8;
+  --violet:#8b5cf6; --cyan:#22d3ee; --green:#34d399; --red:#fb7185; --amber:#fbbf24;
+  --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{min-height:100%;background:var(--bg);-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100dvh;color:var(--ink);background:
+ radial-gradient(circle at 90% 0%,rgb(139 92 246 / 22%),transparent 20rem),
+ radial-gradient(circle at 0% 60%,rgb(34 211 238 / 12%),transparent 22rem),var(--bg);
+ font:15px/1.45 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+[hidden]{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.skip-link{position:fixed;top:8px;left:8px;z-index:100;min-height:44px;padding:10px 14px;border-radius:12px;background:var(--violet);color:#fff;transform:translateY(-150%)}
+.skip-link:focus{transform:translateY(0)}
+button,input{font:inherit}button{cursor:pointer;touch-action:manipulation}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+.app{width:min(100%,560px);min-height:100dvh;margin:0 auto;padding:calc(var(--safe-top) + 14px) 14px calc(118px + var(--safe-bottom))}
+.glass{background:var(--tile);border:1px solid var(--edge);border-radius:22px;backdrop-filter:blur(18px)}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;padding:14px}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brand-mark{display:grid;width:42px;height:42px;flex:0 0 auto;place-items:center;border-radius:14px;background:linear-gradient(135deg,var(--violet),var(--cyan));color:#fff;font-size:1.1rem;font-weight:800}
+.brand-copy strong{display:block;font-size:.95rem;font-weight:800;letter-spacing:-.01em}
+.brand-copy span{display:block;margin-top:2px;color:var(--muted);font-size:.68rem}
+.prototype-chip{flex:0 0 auto;padding:6px 10px;border-radius:999px;border:1px solid var(--edge);color:var(--cyan);font-size:.58rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.eyebrow{margin:0 0 6px;color:var(--cyan);font-size:.66rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+h1,h2,p{margin-top:0}
+h1{margin-bottom:12px;font-size:clamp(2.1rem,9vw,3rem);font-weight:800;line-height:.98;letter-spacing:-.04em}
+.lede{margin-bottom:18px;color:var(--muted);font-size:.88rem;font-weight:300}
+.section-gap{margin-top:14px}
+.capture-card{display:grid;grid-template-columns:1.2fr 1fr;gap:10px;padding:0;border:0;background:transparent;backdrop-filter:none}
+.camera-shell{grid-column:1 / -1;position:relative;height:clamp(180px,32dvh,270px);overflow:hidden;border-radius:18px;
+ background:linear-gradient(180deg,rgb(4 8 20 / 20%),rgb(4 8 20 / 72%)),linear-gradient(135deg,#3b3670 0%,#1b2f52 55%,#0b1730 100%);color:#eef2ff}
+.camera-topline{position:absolute;top:12px;left:12px;right:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.camera-status{display:inline-flex;min-height:30px;align-items:center;gap:7px;padding:6px 11px;border-radius:999px;background:rgb(4 8 20 / 55%);font-size:.68rem;font-weight:800;backdrop-filter:blur(6px)}
+.camera-status::before{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgb(52 211 153 / 18%);content:""}
+.camera-index{color:#c7d2fe;font-size:.68rem}
+.guide{position:absolute;top:28%;right:11%;bottom:23%;left:11%;border:1px dashed rgb(199 210 254 / 40%);border-radius:14px}
+.corner{position:absolute;width:28px;height:28px;border-color:var(--cyan);border-style:solid}
+.corner.tl{top:-2px;left:-2px;border-width:3px 0 0 3px;border-radius:12px 0 0}
+.corner.tr{top:-2px;right:-2px;border-width:3px 3px 0 0;border-radius:0 12px 0 0}
+.corner.bl{bottom:-2px;left:-2px;border-width:0 0 3px 3px;border-radius:0 0 0 12px}
+.corner.br{right:-2px;bottom:-2px;border-width:0 3px 3px 0;border-radius:0 0 12px}
+.vehicle{position:absolute;top:48%;left:50%;width:min(76%,310px);transform:translate(-50%,-50%);color:#cbd5f5}
+.vehicle svg{display:block;width:100%;height:auto}
+.camera-hint{position:absolute;right:14px;bottom:12px;left:14px;margin:0;color:#e0e7ff;font-size:.74rem;text-align:center}
+.scanning .guide{border-color:var(--cyan);animation:pulse 1s ease-in-out infinite alternate}
+.scanning .guide::after{position:absolute;top:0;right:8px;left:8px;height:2px;content:"";background:linear-gradient(90deg,transparent,var(--cyan),transparent);animation:scan 1s linear infinite}
+@keyframes pulse{to{opacity:.6}}@keyframes scan{from{top:5%}to{top:95%}}
+.capture-actions{grid-column:1;display:grid;gap:8px}
+.capture-foot{grid-column:2;display:flex;flex-direction:column;justify-content:center;gap:6px;padding:10px;border-radius:18px;background:var(--tile);border:1px solid var(--edge)}
+.btn{display:inline-flex;min-height:48px;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border:1px solid var(--edge);border-radius:14px;background:var(--tile-2);color:var(--ink);font-weight:800;font-size:.82rem;transition:transform 120ms}
+.btn:active{transform:scale(.985)}.btn svg{width:19px;height:19px;flex:0 0 auto}
+.btn-primary{background:var(--violet);border-color:var(--violet);color:#fff}
+.btn-secondary{background:var(--tile)}
+.btn-success{background:var(--green);border-color:var(--green);color:#062c20}
+.btn-danger{color:var(--red);border-color:rgb(251 113 133 / 45%)}
+.btn-block{width:100%}
+.btn-quiet{min-height:auto;border:0;background:transparent;color:var(--cyan);font-weight:800;font-size:.78rem;text-align:left;padding:0}
+.capture-foot span{color:var(--muted);font-size:.64rem}
+.reading-card{padding:14px;border-radius:22px;background:var(--tile);border:1px solid var(--edge);backdrop-filter:blur(18px)}
+.reading-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.reading-head strong{font-size:.9rem;font-weight:800}.reading-head span{color:var(--muted);font-size:.68rem}
+.plate-frame{margin:0 0 12px;overflow:hidden;border:1px solid var(--edge);border-radius:16px;background:#f8fafc}
+.plate-country{padding:6px 30px 5px;color:var(--violet);background:#eef2ff;font-size:.62rem;font-weight:900;letter-spacing:.24em;text-align:center;text-transform:uppercase}
+.plate-input{width:100%;min-height:78px;border:0;color:#0b1120;background:#fff;font:800 clamp(2rem,10vw,3rem)/1 Inter,system-ui,sans-serif;letter-spacing:.04em;text-align:center;text-transform:uppercase}
+.plate-input:focus{outline-offset:-4px}
+.reading-note{display:flex;align-items:flex-start;gap:9px;margin-bottom:12px;padding:10px 11px;border-radius:14px;background:rgb(251 191 36 / 10%);border:1px solid rgb(251 191 36 / 25%);color:#fcd34d;font-size:.74rem}
+.reading-note svg{width:19px;height:19px;flex:0 0 auto}.reading-note strong{display:block;margin-bottom:2px;color:var(--amber)}
+.reading-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.result-card{border-radius:26px;padding:0;background:linear-gradient(135deg,var(--green),#0ea5a4);color:#052e24;box-shadow:0 20px 50px rgb(52 211 153 / 22%)}
+.result-card.salida{background:linear-gradient(135deg,var(--red),#f43f5e);color:#3f0a14}
+.result-stripe{height:6px;background:repeating-linear-gradient(135deg,rgb(255 255 255 / 45%) 0 9px,transparent 9px 18px)}
+.result-body{padding:24px 18px 20px;text-align:center}
+.result-body p{margin-bottom:5px;font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.8}
+.result-type{margin-bottom:10px;font-size:clamp(2.3rem,13vw,3.4rem);font-weight:800;letter-spacing:-.03em;line-height:1}
+.result-plate{margin-bottom:9px;font:800 clamp(2.1rem,11vw,3rem) Inter,system-ui,sans-serif;letter-spacing:.04em}
+.result-time{font-size:.78rem;font-weight:700}
+.result-body .btn{margin-top:18px;background:#fff;color:var(--green);border-color:#fff}
+.result-card.salida .result-body .btn{color:var(--red)}
+.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.search-wrap{position:relative;flex:1;min-width:0}
+.search-wrap svg{position:absolute;top:50%;left:14px;width:19px;height:19px;color:var(--muted);transform:translateY(-50%);pointer-events:none}
+.search-input{width:100%;min-height:48px;padding:10px 12px 10px 42px;border:1px solid var(--edge);border-radius:14px;background:var(--tile);color:var(--ink);font-size:.9rem;backdrop-filter:blur(10px)}
+.search-input::placeholder{color:#7b8aa0}
+.icon-btn{display:inline-grid;width:48px;height:48px;flex:0 0 auto;place-items:center;border:1px solid var(--edge);border-radius:14px;background:var(--tile);color:var(--cyan)}
+.icon-btn svg{width:20px;height:20px}
+.segments{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:14px;padding:4px;border:1px solid var(--edge);border-radius:14px;background:var(--tile)}
+.segment{min-height:42px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-weight:800;font-size:.76rem}
+.segment[aria-pressed="true"]{background:var(--violet);color:#fff}
+.refresh-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0 14px;color:var(--muted);font-size:.72rem}
+.record-list{display:grid;gap:9px}
+.record{display:grid;grid-template-columns:54px minmax(0,1fr) auto;align-items:center;gap:11px;min-height:76px;padding:9px;border:1px solid var(--edge);border-radius:16px;background:var(--tile)}
+.record-photo{display:grid;width:54px;height:54px;place-items:center;border-radius:12px;background:linear-gradient(135deg,#6d7bd8,#2f3f7a);color:#e6ebff;font-size:.54rem;font-weight:800;text-align:center}
+.record-photo.no-photo{background:#3b4a78}
+.record-main{min-width:0}
+.record-plate{overflow:hidden;margin-bottom:3px;font-weight:800;font-size:1.12rem;letter-spacing:.06em;text-overflow:ellipsis;white-space:nowrap}
+.record-time{overflow:hidden;color:var(--muted);font-size:.7rem;text-overflow:ellipsis;white-space:nowrap}
+.record-meta{color:var(--cyan);font-size:.66rem}
+.badge{display:inline-flex;min-height:26px;align-items:center;padding:5px 9px;border-radius:8px;color:#fff;font-size:.62rem;font-weight:900;text-transform:uppercase}
+.badge.entrada,.badge.adentro{background:var(--green);color:#052e24}.badge.salida{background:var(--red);color:#3f0a14}
+.empty{padding:28px 16px;border:1px dashed var(--edge);border-radius:18px;color:var(--muted);background:var(--tile);text-align:center;font-size:.8rem}
+.empty strong{display:block;margin-bottom:4px;color:var(--ink)}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.metric{padding:14px 8px;border:1px solid var(--edge);border-radius:16px;background:var(--tile);text-align:center}
+.metric strong{display:block;font-size:1.6rem;font-weight:800;line-height:1}
+.metric span{display:block;margin-top:6px;color:var(--muted);font-size:.6rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.metric.primary{background:linear-gradient(135deg,rgb(139 92 246 / 30%),rgb(34 211 238 / 12%));border-color:var(--violet)}
+.bottom-nav{position:fixed;right:12px;bottom:calc(12px + var(--safe-bottom));left:12px;z-index:20;width:min(calc(100% - 24px),540px);margin:0 auto;padding:7px;border:1px solid var(--edge);border-radius:26px;background:rgb(11 17 32 / 82%);box-shadow:0 16px 40px rgb(0 0 0 / 40%);backdrop-filter:blur(20px)}
+.nav-list{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:0;padding:0;list-style:none}
+.nav-button{display:flex;min-height:54px;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;border-radius:18px;background:transparent;color:var(--muted);font-size:.66rem;font-weight:800}
+.nav-button svg{width:20px;height:20px}
+.nav-button[aria-current="page"]{background:linear-gradient(135deg,var(--violet),#6d5ce7);color:#fff}
+dialog{width:min(100% - 24px,480px);margin:auto auto 0;padding:0;border:0;border-radius:26px 26px 0 0;background:#141c30;color:var(--ink)}
+dialog::backdrop{background:rgb(4 8 20 / 70%);backdrop-filter:blur(4px)}
+.sheet-handle{width:44px;height:5px;margin:10px auto 4px;border-radius:999px;background:var(--edge)}
+.sheet-body{padding:16px 18px calc(22px + var(--safe-bottom))}
+.sheet-body h2{margin-bottom:6px;font-weight:800}.sheet-body p{margin-bottom:16px;color:var(--muted);font-size:.84rem}
+.field-label{display:block;margin-bottom:8px;font-size:.78rem;font-weight:800}
+.manual-input{width:100%;min-height:58px;padding:10px 13px;border:1px solid var(--edge);border-radius:14px;background:var(--tile);color:var(--ink);font:800 1.2rem Inter,system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase}
+.sheet-actions{display:grid;grid-template-columns:1fr 1.3fr;gap:10px;margin-top:14px}
+.toast{position:fixed;right:14px;bottom:calc(100px + var(--safe-bottom));left:14px;z-index:30;width:min(100% - 28px,460px);margin:0 auto;padding:12px 14px;border:1px solid var(--edge);border-radius:14px;background:#141c30;color:#fff;font-size:.8rem;font-weight:800;text-align:center;opacity:0;pointer-events:none;transform:translateY(12px);transition:opacity 160ms,transform 160ms}
+.toast.show{opacity:1;transform:translateY(0)}
+.autor{width:100%;padding:18px 0 0;color:var(--muted);font-size:.7rem;text-align:center}
+@media (orientation:portrait){
+ body[data-reading-mode="replace"].reading-open .capture-card,
+ body[data-reading-mode="replace"].result-open .capture-card{display:none}
+ body[data-reading-mode="replace"] #readingCard.section-gap,
+ body[data-reading-mode="replace"] #resultCard.section-gap{margin-top:0}
+}
+@media (orientation:landscape){
+ body[data-reading-mode="replace"] #vista-capturar{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+ body[data-reading-mode="replace"] #vista-capturar > .eyebrow,
+ body[data-reading-mode="replace"] #vista-capturar > h1,
+ body[data-reading-mode="replace"] #vista-capturar > .lede{grid-column:1 / -1}
+ body[data-reading-mode="replace"] .capture-card{grid-column:1;grid-row:2}
+ body[data-reading-mode="replace"] #readingCard,
+ body[data-reading-mode="replace"] #resultCard{grid-column:2;grid-row:2;margin-top:0!important}
+ h1{font-size:1.7rem}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body data-reading-mode="replace">
+<a class="skip-link" href="#contenido">Saltar al contenido</a>
+<div class="app">
+  <header class="topbar glass">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">◈</span>
+      <span class="brand-copy"><strong>Control de acceso</strong><span>Bento · Estacionamiento</span></span>
+    </div>
+    <span class="prototype-chip">Prototipo</span>
+  </header>
+
+  <main id="contenido" tabindex="-1">
+    <section class="view" id="vista-capturar" aria-labelledby="titulo-capturar">
+      <p class="eyebrow">Nuevo movimiento</p>
+      <h1 id="titulo-capturar">Registra el vehículo</h1>
+      <p class="lede">Encuadra la patente. La lectura siempre se confirma antes de guardarse.</p>
+      <div class="card capture-card">
+        <div class="camera-shell glass" id="cameraShell">
+          <div class="camera-topline"><span class="camera-status" id="cameraStatus">Cámara Lista</span><span class="camera-index">1 / 1</span></div>
+          <div class="guide" aria-hidden="true"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i></div>
+          <div class="vehicle" aria-hidden="true"><svg viewBox="0 0 320 180" fill="none"><path d="M38 113 58 70c6-12 18-20 32-20h140c14 0 26 8 32 20l20 43v28c0 9-7 16-16 16H54c-9 0-16-7-16-16v-28Z" fill="currentColor" opacity=".9"></path><path d="m74 67 12-22h148l12 22H74Z" fill="#4A4A8C"></path><rect x="103" y="89" width="114" height="37" rx="5" fill="#F6F8FA"></rect><text x="160" y="114" text-anchor="middle" fill="#10213A" font-family="Arial, sans-serif" font-size="23" font-weight="800" letter-spacing="3">JDXT11</text><circle cx="68" cy="157" r="17" fill="#0B1730"></circle><circle cx="252" cy="157" r="17" fill="#0B1730"></circle></svg></div>
+          <p class="camera-hint" id="cameraHint">Mantén la patente dentro del recuadro</p>
+        </div>
+        <div class="capture-actions">
+          <button class="btn btn-primary" id="btnCamara" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h4l2-3h4l2 3h4v12H4V7Z"></path><circle cx="12" cy="13" r="4"></circle></svg>Tomar Foto</button>
+          <button class="btn btn-secondary" id="btnGaleria" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="8" cy="9" r="2"></circle><path d="m21 15-5-5L5 20"></path></svg>Elegir Foto</button>
+        </div>
+        <div class="capture-foot glass"><button class="btn-quiet" id="btnManual" type="button">Anotar Patente →</button><span>Datos simulados</span></div>
+      </div>
+
+      <div class="reading-card section-gap" id="readingCard" hidden aria-labelledby="readingTitle">
+        <div class="reading-head"><strong id="readingTitle">Revisa la lectura</strong><span>Resultado del modelo</span></div>
+        <div class="plate-frame"><div class="plate-country">Chile</div><label class="sr-only" for="placaLeida">Patente leída</label><input class="plate-input" id="placaLeida" name="placa_leida" value="JDXT11" autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="text"></div>
+        <div class="reading-note" role="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3 2.8 20h18.4L12 3Z"></path><path d="M12 9v5M12 17.5v.1"></path></svg><span><strong>Confirmación manual obligatoria.</strong> Corrige la patente si la lectura no coincide con el vehículo.</span></div>
+        <div class="reading-actions"><button class="btn btn-danger" id="btnDescartar" type="button">Descartar</button><button class="btn btn-success" id="btnConfirmar" type="button">Confirmar Entrada</button></div>
+      </div>
+
+      <div class="result-card section-gap" id="resultCard" hidden aria-labelledby="resultType">
+        <div class="result-stripe" aria-hidden="true"></div>
+        <div class="result-body"><p>Movimiento guardado</p><div class="result-type" id="resultType">Entrada</div><div class="result-plate" id="resultPlate">JDXT11</div><div class="result-time" id="resultTime">25 nov 2026 · 10:52</div><button class="btn btn-block" id="btnOtro" type="button">Registrar Otro</button></div>
+      </div>
+    </section>
+
+    <section class="view" id="vista-bitacora" aria-labelledby="titulo-bitacora" hidden>
+      <p class="eyebrow">Movimientos</p><h1 id="titulo-bitacora">Bitácora</h1><p class="lede">Consulta los ingresos y salidas registrados.</p>
+      <div class="toolbar">
+        <div class="search-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg><label class="sr-only" for="buscar">Buscar por patente</label><input class="search-input" id="buscar" name="buscar" placeholder="Buscar por patente…" autocomplete="off" autocapitalize="characters" spellcheck="false"></div>
+        <button class="icon-btn" id="btnRefrescar" type="button" aria-label="Actualizar bitácora"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 7v5h-5"></path><path d="M4 17v-5h5"></path><path d="M6.1 8a7 7 0 0 1 11.4-2.2L20 8M4 16l2.5 2.2A7 7 0 0 0 17.9 16"></path></svg></button>
+      </div>
+      <div class="segments" role="group" aria-label="Filtrar movimientos"><button class="segment" type="button" data-filter="todos" aria-pressed="true">Todos</button><button class="segment" type="button" data-filter="entrada" aria-pressed="false">Entradas</button><button class="segment" type="button" data-filter="salida" aria-pressed="false">Salidas</button></div>
+      <div class="refresh-row"><span id="freshness">Actualizado ahora</span><span>Datos simulados</span></div>
+      <div class="record-list" id="listaBitacora"></div>
+    </section>
+
+    <section class="view" id="vista-adentro" aria-labelledby="titulo-adentro" hidden>
+      <p class="eyebrow">Ocupación actual</p><h1 id="titulo-adentro">Quién está adentro</h1><p class="lede">Vehículos con un movimiento de entrada sin salida posterior.</p>
+      <div class="summary-grid"><div class="metric primary"><strong>3</strong><span>Adentro</span></div><div class="metric"><strong>12</strong><span>Entradas</span></div><div class="metric"><strong>9</strong><span>Salidas</span></div></div>
+      <div class="record-list" id="listaAdentro"></div>
+    </section>
+  </main>
+  <footer class="autor">© 2026 Desarrollado por Fernando Zapata Figueroa</footer>
+</div>
+
+<nav class="bottom-nav" aria-label="Navegación principal">
+  <ul class="nav-list">
+    <li><button class="nav-button" type="button" data-view="capturar" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h4l2-3h4l2 3h4v12H4V7Z"></path><circle cx="12" cy="13" r="4"></circle></svg>Capturar</button></li>
+    <li><button class="nav-button" type="button" data-view="bitacora"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6M9 16h4"></path></svg>Bitácora</button></li>
+    <li><button class="nav-button" type="button" data-view="adentro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 16V9l2-4h10l2 4v7"></path><path d="M3 16h18v3H3zM7 12h10"></path></svg>Adentro</button></li>
+  </ul>
+</nav>
+
+<dialog id="manualDialog" aria-labelledby="manualTitle">
+  <div class="sheet-handle" aria-hidden="true"></div>
+  <form class="sheet-body" id="manualForm" method="dialog">
+    <h2 id="manualTitle">Anotar patente</h2><p>Úsalo cuando la cámara no pueda tomar una foto legible.</p>
+    <label class="field-label" for="placaManual">Patente del vehículo</label>
+    <input class="manual-input" id="placaManual" name="placa_manual" placeholder="AB1234" autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="text" required>
+    <div class="sheet-actions"><button class="btn btn-danger" id="btnCerrarManual" type="button">Cancelar</button><button class="btn btn-success" type="submit">Registrar Entrada</button></div>
+  </form>
+</dialog>
+<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+<div class="sr-only" id="liveRegion" aria-live="polite" aria-atomic="true"></div>
+<script src="prototipo-logica.js"></script>
+</body>
+</html>

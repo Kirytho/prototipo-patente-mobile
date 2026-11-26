@@ -26,6 +26,9 @@ h1{margin:0 0 6px;font-size:2rem;letter-spacing:-.03em}
 .s-instrumento{background:linear-gradient(135deg,#e6e9ea 0%,#0f6b63 150%)}
 .s-boleta{background:linear-gradient(135deg,#d9d3c6 0%,#fbfaf5 150%)}
 .s-libro{background:linear-gradient(135deg,#f2f0e9 0%,#2f4f6f 150%)}
+.s-senaletica{background:linear-gradient(135deg,#f6f8fa 0%,#1c5bd9 150%)}
+.s-bento{background:linear-gradient(135deg,#0b1120 0%,#8b5cf6 150%)}
+.s-consola{background:linear-gradient(135deg,#e8eaec 0%,#1e293b 150%)}
 .body{padding:16px 18px 18px}
 .name{margin:0 0 6px;font-size:1.1rem}
 .desc{margin:0 0 12px;color:var(--muted);font-size:.84rem}
@@ -38,7 +41,7 @@ code{background:#e4ebf3;padding:2px 5px;border-radius:5px}
 <body>
 <div class="wrap">
   <h1>Variantes del prototipo</h1>
-  <p class="lede">Ocho diseños con la <strong>misma lógica</strong> (captura → lectura → confirmación, bitácora y ocupación). Cambia la paleta, la tipografía y la distribución. Elegí la que mejor funcione y la llevamos al prototipo final.</p>
+  <p class="lede">Once diseños con la <strong>misma lógica</strong> (captura → lectura → confirmación, bitácora y ocupación). Cambia la paleta, la tipografía y la distribución. Elegí la que mejor funcione y la llevamos al prototipo final.</p>
 
   <div class="grid">
     <a class="card" href="lector-patente-mobile-prototype.html">
@@ -111,9 +114,36 @@ code{background:#e4ebf3;padding:2px 5px;border-radius:5px}
         <div class="tags"><span class="tag">Reglas</span><span class="tag">Dos fuentes</span><span class="tag">Libro abierto</span></div>
       </div>
     </a>
+
+    <a class="card" href="variante-senaletica.html">
+      <div class="swatch s-senaletica"></div>
+      <div class="body">
+        <h2 class="name">H · Señalética</h2>
+        <p class="desc">Paleta real de parking UI: Parking Blue <strong>#1C5BD9</strong>, verde libre, rojo no-estacionar. Bloques cuadrados y letra condensada.</p>
+        <div class="tags"><span class="tag">Letrero</span><span class="tag">Condensada</span><span class="tag">Web</span></div>
+      </div>
+    </a>
+
+    <a class="card" href="variante-bento.html">
+      <div class="swatch s-bento"></div>
+      <div class="body">
+        <h2 class="name">I · Bento 2026</h2>
+        <p class="desc">Tiles asimétricos, <strong>glassmorphism</strong> y modo oscuro. Violeta/cian y pesos de fuente extremos.</p>
+        <div class="tags"><span class="tag">Bento</span><span class="tag">Glass</span><span class="tag">Dark</span></div>
+      </div>
+    </a>
+
+    <a class="card" href="variante-consola.html">
+      <div class="swatch s-consola"></div>
+      <div class="body">
+        <h2 class="name">J · Consola lateral</h2>
+        <p class="desc">Rail lateral de dashboard, paleta gris garaje y <strong>Trebuchet</strong>. Distribución de consola, no de tarjetas.</p>
+        <div class="tags"><span class="tag">Sidebar</span><span class="tag">Trebuchet</span><span class="tag">Denso</span></div>
+      </div>
+    </a>
   </div>
 
-  <p class="foot">Servidas desde <code>http://localhost:8080/</code>. La lógica está en <code>prototipo-logica.js</code>, compartida por las siete variantes. Todas llevan el footer <em>© 2026 Desarrollado por Fernando Zapata Figueroa</em>.</p>
+  <p class="foot">Servidas desde <code>http://localhost:8080/</code>. La lógica está en <code>prototipo-logica.js</code>, compartida por las diez variantes. Todas llevan el footer <em>© 2026 Desarrollado por Fernando Zapata Figueroa</em>.</p>
 </div>
 </body>
 </html>
