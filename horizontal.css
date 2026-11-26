@@ -42,7 +42,7 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
     max-width: none !important;
     margin: 0 !important;
     height: 100dvh;
-    padding: 6px 10px 40px !important;
+    padding: 6px 10px 52px !important;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -156,10 +156,14 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
   .rail .nav-button { display: none !important; }
   .camera-topline { top: 8px; left: 8px; right: 8px; }
   .vehicle { width: min(70%, 280px); }
-  .capture-actions { flex: 0 0 auto; grid-column: auto !important; gap: 5px !important; margin-top: 4px !important; }
-  .capture-foot { flex: 0 0 auto; grid-column: auto !important; margin-top: 2px !important; padding-top: 2px !important; }
-  .btn { min-height: 30px !important; padding: 3px 6px !important; font-size: .6rem !important; }
-  .btn-quiet { min-height: 22px !important; }
+  .capture-actions { flex: 0 0 auto; grid-column: auto !important; gap: 4px !important; margin-top: 3px !important; }
+  .capture-foot { flex: 0 0 auto; grid-column: auto !important; margin-top: 8px !important; padding-top: 4px !important; }
+  .btn { min-height: 26px !important; padding: 2px 5px !important; font-size: .56rem !important; }
+  .capture-actions .btn { min-height: 24px !important; }
+  .btn svg { width: 15px !important; height: 15px !important; }
+  .btn-quiet { min-height: 18px !important; font-size: .52rem !important; }
+  /* Colchón extra antes de la barra inferior. */
+  .capture-card, #readingCard, #resultCard { margin-bottom: 12px !important; }
 
   #readingCard, #resultCard {
     grid-column: 2;
@@ -227,7 +231,7 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
     padding: 1px 4px !important;
   }
   .nav-button svg { width: 14px !important; height: 14px !important; }
-  .toast { bottom: 40px !important; }
+  .toast { bottom: 52px !important; }
 
   /* Consola tiene rail lateral: su cabecera debe ser aún más baja para que
      la tarjeta de captura alcance a mostrar visor + botones. */
@@ -239,13 +243,14 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
 
 /* Pantallas realmente bajas (667x375, 568x320…): aprieta un poco más. */
 @media (orientation: landscape) and (max-height: 420px) {
-  .app { padding-top: 3px !important; padding-bottom: 32px !important; }
+  .app { padding-top: 3px !important; padding-bottom: 44px !important; }
   .topbar { padding: 3px 8px !important; }
   .bottom-nav { height: calc(30px + env(safe-area-inset-bottom, 0px)); }
   .nav-button { min-height: 26px !important; font-size: .46rem !important; }
   #vista-capturar > h1 { font-size: .85rem !important; }
   #vista-capturar > .lede { font-size: .43rem !important; }
-  .btn { min-height: 30px !important; }
+  .btn { min-height: 24px !important; }
+  .capture-actions .btn { min-height: 22px !important; }
   .plate-input { min-height: 36px !important; }
   .record-photo { display: none !important; }
   .record { grid-template-columns: minmax(0, 1fr) auto !important; }
