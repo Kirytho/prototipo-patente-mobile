@@ -1,3 +1,6 @@
+/* Menú único: la variante Consola no repite botones abajo y a la izquierda. */
+.rail .nav-button { display: none !important; }
+
 /* Layout a pantalla fija para horizontal / pantallas bajas.
    Se carga después del <style> de cada variante para poder sobreescribirlo.
    La resolución real la publica responsive.js en data-orientation / data-short. */
@@ -93,10 +96,19 @@
     padding: 8px !important;
   }
   .camera-shell {
-    flex: 1 1 auto;
-    min-height: 0;
-    height: auto !important;
+    /* Alto explícito: varios recuadros sólo tienen hijos position:absolute,
+       así que con flex-basis:auto colapsaban a 0px en horizontal. */
+    flex: 0 0 auto !important;
+    height: clamp(110px, 34dvh, 180px) !important;
+    min-height: 110px !important;
   }
+
+  /* Botones de captura en dos columnas: libera altura para el visor. */
+  .capture-actions { display: grid !important; grid-template-columns: 1.2fr 1fr !important; }
+
+  /* La variante Consola llevaba menú abajo y también a la izquierda.
+     En horizontal se queda una sola barra: la de abajo. */
+  .rail .nav-button { display: none !important; }
   .camera-topline { top: 8px; left: 8px; right: 8px; }
   .vehicle { width: min(70%, 280px); }
   .capture-actions { flex: 0 0 auto; grid-column: auto !important; gap: 6px; margin-top: 6px !important; }
@@ -146,13 +158,24 @@
     right: 0 !important;
     width: auto !important;
     max-width: none !important;
-    height: 52px;
+    height: calc(52px + env(safe-area-inset-bottom, 0px));
     margin: 0 !important;
-    padding: 3px 8px !important;
+    /* Colchón para esquinas redondeadas / notch: el primer botón no queda pegado al borde. */
+    padding:
+      3px
+      calc(14px + env(safe-area-inset-right, 0px))
+      calc(3px + env(safe-area-inset-bottom, 0px))
+      calc(14px + env(safe-area-inset-left, 0px)) !important;
     border-radius: 0 !important;
   }
-  .nav-list { height: 100%; }
-  .nav-button { min-height: 42px !important; font-size: .58rem !important; gap: 1px !important; padding: 2px !important; }
+  .nav-list { height: 100%; max-width: 720px; margin: 0 auto; }
+  .nav-button {
+    width: 100% !important;
+    min-height: 42px !important;
+    font-size: .58rem !important;
+    gap: 1px !important;
+    padding: 2px 6px !important;
+  }
   .nav-button svg { width: 17px !important; height: 17px !important; }
   .toast { bottom: 58px !important; }
 }
@@ -161,7 +184,7 @@
 @media (orientation: landscape) and (max-height: 420px) {
   .app { padding-top: 4px !important; padding-bottom: 48px !important; }
   .topbar { padding: 4px 8px !important; }
-  .bottom-nav { height: 44px; }
+  .bottom-nav { height: calc(46px + env(safe-area-inset-bottom, 0px)); }
   .nav-button { min-height: 36px !important; }
   .btn { min-height: 34px !important; }
   .plate-input { min-height: 42px !important; }
