@@ -125,24 +125,23 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     grid-template-rows: auto auto minmax(0, 1fr);
-    gap: 4px;
+    gap: 2px;
     align-items: stretch;
   }
-  /* Encabezado compacto: etiqueta + título a la izquierda, descripción a la
-     derecha. Antes ocupaban tres filas apiladas y desperdiciaban altura. */
-  #vista-capturar > .eyebrow { grid-column: 1 !important; grid-row: 1 !important; align-self: end; margin: 0 !important; }
+  /* Encabezado mínimo: el protagonista es el visor y la lectura. */
+  #vista-capturar > .eyebrow { grid-column: 1 !important; grid-row: 1 !important; align-self: end; margin: 0 !important; font-size: .42rem !important; }
   #vista-capturar > h1 { grid-column: 1 !important; grid-row: 2 !important; align-self: start; margin: 0 !important; }
-  #vista-capturar > .lede { grid-column: 2 !important; grid-row: 1 / span 2 !important; align-self: center; margin: 0 !important; }
+  #vista-capturar > .lede { grid-column: 2 !important; grid-row: 1 / span 2 !important; align-self: center; margin: 0 !important; font-size: .42rem !important; }
   /* Una sola línea cada uno: liberamos altura para cámara y revisión. */
   #vista-capturar > h1 {
     max-width: none !important;
     white-space: nowrap !important;
-    font-size: .95rem !important;
+    font-size: .8rem !important;
   }
   #vista-capturar > .lede {
     max-width: none !important;
     white-space: nowrap !important;
-    font-size: .48rem !important;
+    font-size: .42rem !important;
   }
   /* Las variantes tenían su propia regla grid-row:2 con mayor especificidad. */
   body[data-reading-mode] .capture-card,
@@ -175,7 +174,21 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
   .camera-topline { top: 8px; left: 8px; right: 8px; }
   .vehicle { width: min(70%, 280px); }
   .capture-actions { flex: 0 0 auto; grid-column: auto !important; gap: 4px !important; margin-top: 3px !important; }
-  .capture-foot { flex: 0 0 auto; grid-column: auto !important; margin-top: 8px !important; padding-top: 4px !important; }
+  /* El pie antes era una columna con caja (hasta 51px en Bento). Línea fina. */
+  .capture-foot {
+    flex: 0 0 auto;
+    grid-column: auto !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    min-height: 0 !important;
+    margin-top: 4px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+  }
   .btn { min-height: 26px !important; padding: 2px 5px !important; font-size: .56rem !important; }
   .capture-actions .btn { min-height: 24px !important; }
   .btn svg { width: 15px !important; height: 15px !important; }
@@ -198,13 +211,13 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
   .reading-head strong, .reading-head span { font-size: .6rem !important; }
   .plate-frame { margin: 4px !important; }
   .plate-country { padding: 3px 24px 2px !important; font-size: .5rem !important; }
-  .plate-input { min-height: 40px !important; font-size: clamp(1.3rem, 4vw, 1.8rem) !important; }
+  .plate-input { min-height: 48px !important; font-size: clamp(1.6rem, 5vw, 2.2rem) !important; }
   .reading-note { margin: 0 4px 4px !important; padding: 4px 6px !important; font-size: .55rem !important; line-height: 1.2 !important; }
   .reading-actions { padding: 0 4px 4px !important; }
   .result-body { padding: 8px 6px !important; }
   .result-body p { font-size: .55rem !important; margin-bottom: 3px !important; }
-  .result-type { font-size: clamp(1.3rem, 5vw, 2rem) !important; margin-bottom: 4px !important; }
-  .result-plate { font-size: clamp(1.2rem, 4vw, 1.8rem) !important; margin-bottom: 4px !important; }
+  .result-type { font-size: clamp(1.6rem, 6vw, 2.4rem) !important; margin-bottom: 4px !important; }
+  .result-plate { font-size: clamp(1.5rem, 5vw, 2.1rem) !important; margin-bottom: 4px !important; }
   .result-time { font-size: .6rem !important; }
   .result-body .btn { margin-top: 6px !important; min-height: 30px !important; font-size: .6rem !important; }
 
