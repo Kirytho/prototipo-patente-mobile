@@ -42,7 +42,7 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
     max-width: none !important;
     margin: 0 !important;
     height: 100dvh;
-    padding: 6px 10px 58px !important;
+    padding: 6px 10px 40px !important;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -106,20 +106,22 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
   #vista-capturar {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-rows: auto auto auto minmax(0, 1fr);
-    gap: 6px;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    gap: 4px;
     align-items: stretch;
   }
-  #vista-capturar > .eyebrow { grid-column: 1 / -1; grid-row: 1; }
-  #vista-capturar > h1 { grid-column: 1 / -1; grid-row: 2; }
-  #vista-capturar > .lede { grid-column: 1 / -1; grid-row: 3; }
+  /* Encabezado compacto: etiqueta + título a la izquierda, descripción a la
+     derecha. Antes ocupaban tres filas apiladas y desperdiciaban altura. */
+  #vista-capturar > .eyebrow { grid-column: 1 !important; grid-row: 1 !important; align-self: end; margin: 0 !important; }
+  #vista-capturar > h1 { grid-column: 1 !important; grid-row: 2 !important; align-self: start; margin: 0 !important; }
+  #vista-capturar > .lede { grid-column: 2 !important; grid-row: 1 / span 2 !important; align-self: center; margin: 0 !important; }
   /* Las variantes tenían su propia regla grid-row:2 con mayor especificidad. */
   body[data-reading-mode] .capture-card,
   body[data-reading-mode] #readingCard,
-  body[data-reading-mode] #resultCard { grid-row: 4 !important; }
+  body[data-reading-mode] #resultCard { grid-row: 3 !important; }
   .capture-card {
     grid-column: 1;
-    grid-row: 4;
+    grid-row: 3;
     min-width: 0;
     height: 100%;
     display: flex !important;
@@ -150,7 +152,7 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
 
   #readingCard, #resultCard {
     grid-column: 2;
-    grid-row: 4;
+    grid-row: 3;
     min-width: 0;
     height: 100%;
     margin: 0 !important;
@@ -195,7 +197,7 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
     right: 0 !important;
     width: auto !important;
     max-width: none !important;
-    height: calc(46px + env(safe-area-inset-bottom, 0px));
+    height: calc(34px + env(safe-area-inset-bottom, 0px));
     margin: 0 !important;
     /* Colchón para esquinas redondeadas / notch: el primer botón no queda pegado al borde. */
     padding:
@@ -208,13 +210,13 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
   .nav-list { height: 100%; max-width: 720px; margin: 0 auto; }
   .nav-button {
     width: 100% !important;
-    min-height: 38px !important;
-    font-size: .52rem !important;
-    gap: 1px !important;
-    padding: 2px 6px !important;
+    min-height: 28px !important;
+    font-size: .48rem !important;
+    gap: 0 !important;
+    padding: 1px 4px !important;
   }
-  .nav-button svg { width: 16px !important; height: 16px !important; }
-  .toast { bottom: 52px !important; }
+  .nav-button svg { width: 14px !important; height: 14px !important; }
+  .toast { bottom: 40px !important; }
 
   /* Consola tiene rail lateral: su cabecera debe ser aún más baja para que
      la tarjeta de captura alcance a mostrar visor + botones. */
@@ -226,10 +228,10 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
 
 /* Pantallas realmente bajas (667x375, 568x320…): aprieta un poco más. */
 @media (orientation: landscape) and (max-height: 420px) {
-  .app { padding-top: 3px !important; padding-bottom: 42px !important; }
+  .app { padding-top: 3px !important; padding-bottom: 32px !important; }
   .topbar { padding: 3px 8px !important; }
-  .bottom-nav { height: calc(40px + env(safe-area-inset-bottom, 0px)); }
-  .nav-button { min-height: 32px !important; font-size: .5rem !important; }
+  .bottom-nav { height: calc(30px + env(safe-area-inset-bottom, 0px)); }
+  .nav-button { min-height: 26px !important; font-size: .46rem !important; }
   .btn { min-height: 30px !important; }
   .plate-input { min-height: 36px !important; }
   .record-photo { display: none !important; }
