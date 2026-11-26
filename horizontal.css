@@ -70,17 +70,17 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
   }
   .brand-mark { width: 30px !important; height: 30px !important; }
   .brand-mark svg, .brand-mark img { width: 20px !important; height: 20px !important; }
-  .brand-copy strong { font-size: .82rem !important; }
-  .brand-copy span { font-size: .56rem !important; }
-  h1 { font-size: 1.25rem !important; margin-bottom: 4px !important; line-height: 1.3 !important; padding-bottom: 2px !important; }
+  .brand-copy strong { font-size: .72rem !important; }
+  .brand-copy span { font-size: .5rem !important; }
+  h1 { font-size: 1rem !important; margin-bottom: 2px !important; line-height: 1.2 !important; padding-bottom: 1px !important; }
   /* Antes se ocultaban: ahora se compactan para que ningún texto desaparezca
      (incluido el footer con el nombre del creador). */
-  .eyebrow { margin: 0 0 2px !important; font-size: .55rem !important; line-height: 1.1 !important; }
-  .lede { margin: 0 0 4px !important; font-size: .64rem !important; line-height: 1.2 !important; }
-  .camera-hint { display: block !important; bottom: 4px !important; font-size: .58rem !important; }
-  .autor { display: block !important; padding: 2px 0 0 !important; font-size: .58rem !important; line-height: 1.1 !important; }
-  .refresh-row { margin: 2px 0 !important; font-size: .55rem !important; }
-  .capture-foot span { display: inline !important; font-size: .55rem !important; }
+  .eyebrow { margin: 0 0 1px !important; font-size: .5rem !important; line-height: 1.1 !important; }
+  .lede { margin: 0 0 2px !important; font-size: .55rem !important; line-height: 1.1 !important; }
+  .camera-hint { display: block !important; bottom: 3px !important; font-size: .5rem !important; }
+  .autor { display: block !important; padding: 0 !important; font-size: .5rem !important; line-height: 1.1 !important; }
+  .refresh-row { margin: 2px 0 !important; font-size: .5rem !important; }
+  .capture-foot span { display: inline !important; font-size: .5rem !important; }
 
   main, #contenido {
     flex: 1 1 auto !important;
@@ -106,26 +106,33 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
   #vista-capturar {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr);
-    gap: 10px;
+    grid-template-rows: auto auto auto minmax(0, 1fr);
+    gap: 6px;
     align-items: stretch;
   }
+  #vista-capturar > .eyebrow { grid-column: 1 / -1; grid-row: 1; }
+  #vista-capturar > h1 { grid-column: 1 / -1; grid-row: 2; }
+  #vista-capturar > .lede { grid-column: 1 / -1; grid-row: 3; }
+  /* Las variantes tenían su propia regla grid-row:2 con mayor especificidad. */
+  body[data-reading-mode] .capture-card,
+  body[data-reading-mode] #readingCard,
+  body[data-reading-mode] #resultCard { grid-row: 4 !important; }
   .capture-card {
     grid-column: 1;
-    grid-row: 1;
+    grid-row: 4;
     min-width: 0;
     height: 100%;
     display: flex !important;
     flex-direction: column;
     overflow: hidden;
-    padding: 8px !important;
+    padding: 6px !important;
   }
   .camera-shell {
     /* Alto explícito: varios recuadros sólo tienen hijos position:absolute,
        así que con flex-basis:auto colapsaban a 0px en horizontal. */
-    flex: 0 0 auto !important;
-    height: clamp(110px, 34dvh, 180px) !important;
-    min-height: 110px !important;
+    flex: 1 1 auto !important;
+    height: auto !important;
+    min-height: 95px !important;
   }
 
   /* Botones de captura en dos columnas: libera altura para el visor. */
@@ -136,13 +143,14 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
   .rail .nav-button { display: none !important; }
   .camera-topline { top: 8px; left: 8px; right: 8px; }
   .vehicle { width: min(70%, 280px); }
-  .capture-actions { flex: 0 0 auto; grid-column: auto !important; gap: 6px; margin-top: 6px !important; }
-  .capture-foot { flex: 0 0 auto; grid-column: auto !important; margin-top: 4px !important; padding-top: 4px !important; }
-  .btn { min-height: 40px !important; padding: 6px 8px !important; font-size: .72rem !important; }
+  .capture-actions { flex: 0 0 auto; grid-column: auto !important; gap: 5px !important; margin-top: 4px !important; }
+  .capture-foot { flex: 0 0 auto; grid-column: auto !important; margin-top: 2px !important; padding-top: 2px !important; }
+  .btn { min-height: 30px !important; padding: 3px 6px !important; font-size: .6rem !important; }
+  .btn-quiet { min-height: 22px !important; }
 
   #readingCard, #resultCard {
     grid-column: 2;
-    grid-row: 1;
+    grid-row: 4;
     min-width: 0;
     height: 100%;
     margin: 0 !important;
@@ -151,15 +159,19 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
     flex-direction: column;
     justify-content: center;
   }
-  .reading-head { padding: 5px 8px !important; }
-  .plate-frame { margin: 6px !important; }
-  .plate-input { min-height: 52px !important; font-size: clamp(1.5rem, 5vw, 2.4rem) !important; }
-  .reading-note { margin: 0 6px 6px !important; padding: 6px 8px !important; font-size: .64rem !important; }
-  .reading-actions { padding: 0 6px 6px !important; }
-  .result-body { padding: 10px 8px !important; }
-  .result-type { font-size: clamp(1.6rem, 6vw, 2.6rem) !important; margin-bottom: 5px !important; }
-  .result-plate { font-size: clamp(1.5rem, 5vw, 2.3rem) !important; margin-bottom: 5px !important; }
-  .result-body .btn { margin-top: 8px !important; min-height: 38px !important; }
+  .reading-head { padding: 3px 6px !important; }
+  .reading-head strong, .reading-head span { font-size: .6rem !important; }
+  .plate-frame { margin: 4px !important; }
+  .plate-country { padding: 3px 24px 2px !important; font-size: .5rem !important; }
+  .plate-input { min-height: 40px !important; font-size: clamp(1.3rem, 4vw, 1.8rem) !important; }
+  .reading-note { margin: 0 4px 4px !important; padding: 4px 6px !important; font-size: .55rem !important; line-height: 1.2 !important; }
+  .reading-actions { padding: 0 4px 4px !important; }
+  .result-body { padding: 8px 6px !important; }
+  .result-body p { font-size: .55rem !important; margin-bottom: 3px !important; }
+  .result-type { font-size: clamp(1.3rem, 5vw, 2rem) !important; margin-bottom: 4px !important; }
+  .result-plate { font-size: clamp(1.2rem, 4vw, 1.8rem) !important; margin-bottom: 4px !important; }
+  .result-time { font-size: .6rem !important; }
+  .result-body .btn { margin-top: 6px !important; min-height: 30px !important; font-size: .6rem !important; }
 
   /* Bitácora y Adentro: dos columnas y filas compactas, sin scroll. */
   #vista-bitacora, #vista-adentro { display: block; }
@@ -183,7 +195,7 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
     right: 0 !important;
     width: auto !important;
     max-width: none !important;
-    height: calc(52px + env(safe-area-inset-bottom, 0px));
+    height: calc(46px + env(safe-area-inset-bottom, 0px));
     margin: 0 !important;
     /* Colchón para esquinas redondeadas / notch: el primer botón no queda pegado al borde. */
     padding:
@@ -196,23 +208,30 @@ h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
   .nav-list { height: 100%; max-width: 720px; margin: 0 auto; }
   .nav-button {
     width: 100% !important;
-    min-height: 42px !important;
-    font-size: .58rem !important;
+    min-height: 38px !important;
+    font-size: .52rem !important;
     gap: 1px !important;
     padding: 2px 6px !important;
   }
-  .nav-button svg { width: 17px !important; height: 17px !important; }
-  .toast { bottom: 58px !important; }
+  .nav-button svg { width: 16px !important; height: 16px !important; }
+  .toast { bottom: 52px !important; }
+
+  /* Consola tiene rail lateral: su cabecera debe ser aún más baja para que
+     la tarjeta de captura alcance a mostrar visor + botones. */
+  .app:has(.rail) #vista-capturar { gap: 2px !important; }
+  .app:has(.rail) .eyebrow { margin: 0 !important; font-size: .45rem !important; line-height: 1 !important; }
+  .app:has(.rail) h1 { font-size: .85rem !important; line-height: 1.1 !important; margin: 0 !important; padding: 0 !important; }
+  .app:has(.rail) .lede { margin: 0 !important; font-size: .48rem !important; line-height: 1 !important; }
 }
 
 /* Pantallas realmente bajas (667x375, 568x320…): aprieta un poco más. */
 @media (orientation: landscape) and (max-height: 420px) {
-  .app { padding-top: 4px !important; padding-bottom: 48px !important; }
-  .topbar { padding: 4px 8px !important; }
-  .bottom-nav { height: calc(46px + env(safe-area-inset-bottom, 0px)); }
-  .nav-button { min-height: 36px !important; }
-  .btn { min-height: 34px !important; }
-  .plate-input { min-height: 42px !important; }
+  .app { padding-top: 3px !important; padding-bottom: 42px !important; }
+  .topbar { padding: 3px 8px !important; }
+  .bottom-nav { height: calc(40px + env(safe-area-inset-bottom, 0px)); }
+  .nav-button { min-height: 32px !important; font-size: .5rem !important; }
+  .btn { min-height: 30px !important; }
+  .plate-input { min-height: 36px !important; }
   .record-photo { display: none !important; }
   .record { grid-template-columns: minmax(0, 1fr) auto !important; }
 }
