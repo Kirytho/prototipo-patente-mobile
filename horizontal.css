@@ -1,3 +1,9 @@
+/* Los botones viven dentro de <li>: sin width:100% se encogen a su texto y
+   dejan una franja vacía a la derecha de cada celda. */
+.nav-list > li { min-width: 0; }
+.nav-list .nav-button { width: 100% !important; }
+.nav-list { justify-items: stretch !important; }
+
 /* Ajustes de texto para TODAS las orientaciones: nada se corta ni se elide. */
 h1 { line-height: 1.25 !important; padding-bottom: 1px !important; }
 
